@@ -20,7 +20,7 @@ namespace RespectPhone
     /// </summary>
     public partial class IncomingCall : Window
     {
-        System.Media.SoundPlayer snd;
+        MediaPlayer snd;
         public IncomingCall(ICall call)
         {
             InitializeComponent();
@@ -45,7 +45,9 @@ namespace RespectPhone
             {
                 this.Topmost = false;
                 System.IO.Stream str = Properties.Resources.Ringing;
-                snd = new System.Media.SoundPlayer(str);
+                snd = new MediaPlayer();
+                snd.Open(new Uri(System.Environment.CurrentDirectory + "\\resources\\Ringing.wav", UriKind.Relative));
+                snd.Volume = 0.2;
                 snd.Play();
             }
             catch (Exception e)
@@ -60,8 +62,7 @@ namespace RespectPhone
             {
                 if (snd == null) return;
 
-                snd.Stop();
-                snd.Dispose();
+                snd.Stop();                
                 snd = null;
             }
             catch 
@@ -80,10 +81,16 @@ namespace RespectPhone
                     case CallState.Cancelled:
                     case CallState.Busy:
                     case CallState.Answered:
-                        this.Close();
+                        Dispatcher.BeginInvoke((Action)(() =>
+                        {
+                            this.Close();
+                        }));
                         break;
                 }
-                CallStateText.Text = st.ToString();
+                Dispatcher.BeginInvoke((Action)(() =>
+                {
+                    CallStateText.Text = st.ToString();
+                }));
             }
         }
 

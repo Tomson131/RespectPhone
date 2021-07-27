@@ -242,9 +242,7 @@ namespace RespectPhone
             
             if (speaker != null)
                 speaker.Start();
-            connector.Connect(mediaReceiver, speaker);
-
-
+            connector.Connect(mediaReceiver, speaker);            
             mediaReceiver.AttachToCall(c);
         }
 

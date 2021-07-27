@@ -33,7 +33,7 @@
             </Grid>
             <Grid>
                 <Label Name="Time"  Foreground="#FFF" HorizontalAlignment="Center" ></Label>
-                <TextBox Name="Num" FontSize="25" Margin="20,25,20,20">
+                <TextBox Name="Num" FontSize="25" Margin="20,25,20,20" KeyDown="Num_KeyDown">
 
                 </TextBox>
             </Grid>
@@ -108,6 +108,13 @@
                 </Button>
                 <Button Name="TransferBtn" Click="TransferBtn_Click" Visibility="Visible" Cursor="Hand" BorderThickness="0" Background="Transparent">
                     <Image Height="25" Source="pack://siteoforigin:,,,/Resources/transfer.png"></Image>
+                </Button>
+
+                <Button Name="AutoAnswerOn" Click="AutoAnswerOn_Click" Visibility="Collapsed" Cursor="Hand" BorderThickness="0" Background="Transparent">
+                    <Image Height="25" Source="pack://siteoforigin:,,,/Resources/aa_on.png"></Image>
+                </Button>
+                <Button Name="AutoAnswerOff" Click="AutoAnswerOff_Click" Visibility="Visible" Cursor="Hand" BorderThickness="0" Background="Transparent">
+                    <Image Height="25" Source="pack://siteoforigin:,,,/Resources/aa_off.png"></Image>
                 </Button>
             </StackPanel>
         </StackPanel>

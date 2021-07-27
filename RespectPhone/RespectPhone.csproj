@@ -165,5 +165,15 @@
   <ItemGroup>
     <None Include="Resources\phico.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\aa_off.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\aa_on.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

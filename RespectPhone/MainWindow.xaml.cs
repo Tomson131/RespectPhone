@@ -26,15 +26,17 @@ namespace RespectPhone
         bool transferOn = false;
         int seconds = 0;
         System.Timers.Timer timer = new System.Timers.Timer();
+        bool auto_answer = false;
         System.Windows.Forms.NotifyIcon nIcon = new System.Windows.Forms.NotifyIcon();
         public MainWindow()
         {
             InitializeComponent();
-            Phone = new SoftPhone(new RespSIPAccount(), "");
+            RespSIPAccount.ReadConf();
+            Phone = new SoftPhone(RespSIPAccount.INS, "");
             Phone.IncomingCallReceived += IncomingCall;
             Phone.RegisterStateChanged += RegisterStateChanged;
             GlobalEvent.INS.RiseAction += RiseAction;
-
+        
             timer.Interval = 1000;
             timer.Elapsed += TimerTick;
             timer.Enabled = true;
@@ -63,7 +65,7 @@ namespace RespectPhone
             double m = Math.Round(z);
             var s = seconds - m * 60;
             Dispatcher.BeginInvoke((Action)(() => { 
-            Time.Content = (m > 9 ? m.ToString("F0") : "0" + m.ToString("F0")) + ":" + (s > 9 ? m.ToString() : "0" + s.ToString());
+            Time.Content = (m > 9 ? m.ToString("F0") : "0" + m.ToString("F0")) + ":" + (s > 9 ? s.ToString() : "0" + s.ToString());
             }));
         }
 
@@ -136,11 +138,16 @@ namespace RespectPhone
             Dispatcher.BeginInvoke((Action)(() => {
                 if (this.WindowState == WindowState.Minimized)
                     this.WindowState = WindowState.Normal;
-
-                IncomingCall ic = new IncomingCall(e.Item);
-                Num.Text = e.Item.DialInfo.CallerID;
-                ic.Show();
-                ic.Topmost = true;
+                if (auto_answer) {
+                    e.Item.Answer();
+                }
+                else
+                {
+                    IncomingCall ic = new IncomingCall(e.Item);
+                    Num.Text = e.Item.DialInfo.CallerID;
+                    ic.Show();
+                    ic.Topmost = true;
+                }
             }));
         }
 
@@ -285,6 +292,28 @@ namespace RespectPhone
                 this.ShowInTaskbar = false;
             else
                 this.ShowInTaskbar = true;
+        }
+
+        private void AutoAnswerOn_Click(object sender, RoutedEventArgs e)
+        {
+            auto_answer = false;
+            AutoAnswerOn.Visibility = Visibility.Collapsed;
+            AutoAnswerOff.Visibility = Visibility.Visible;
+        }
+
+        private void AutoAnswerOff_Click(object sender, RoutedEventArgs e)
+        {
+            auto_answer = true;
+            AutoAnswerOn.Visibility = Visibility.Visible;
+            AutoAnswerOff.Visibility = Visibility.Collapsed;
+        }
+
+        private void Num_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                Num_Button_Click(CallBtn, null);
+            }
         }
     }
 }
