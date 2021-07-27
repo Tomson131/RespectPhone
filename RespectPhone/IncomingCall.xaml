@@ -1,0 +1,30 @@
+﻿<Window x:Class="RespectPhone.IncomingCall"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RespectPhone"
+        mc:Ignorable="d"
+        Title="IncomingCall"  Height="200" Width="300" Background="Black" WindowStyle="None" Closing="Window_Closing" Unloaded="Window_Unloaded">
+    <Grid>
+        <Grid MouseDown="Grid_MouseDown" VerticalAlignment="Top" Height="20" Background="#FF303030">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Border Width="20" Height="20" Background="Red" Cursor="Hand" MouseDown="Border_MouseDown" CornerRadius="10">
+                    <Label Padding="0" HorizontalAlignment="Center">x</Label>
+                </Border>
+            </StackPanel>
+        </Grid>
+        <StackPanel Margin="0,20,0,0">
+            <TextBlock Name="Caller" Background="Transparent" Foreground="White" FontSize="18" Margin="10,25,10,0" FontWeight="Bold"></TextBlock>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
+                <Button Tag="x" Click="Num_Button_Click" Background="Transparent" Margin="0,0,50,0" BorderThickness="0.5" BorderBrush="Black" Foreground="#FFF" FontSize="16">
+                    <Image Height="55" HorizontalAlignment="Center" VerticalAlignment="Center" Source="pack://siteoforigin:,,,/Resources/phone_down.png"></Image>
+                </Button>
+                <Button Tag="call" Click="Button_Click" Background="Transparent" BorderThickness="0.5" BorderBrush="Black" Foreground="#FFF" FontSize="16">
+                    <Image Height="55" HorizontalAlignment="Center" VerticalAlignment="Center" Source="pack://siteoforigin:,,,/Resources/phone_up.png"></Image>
+                </Button>
+            </StackPanel>
+            <TextBlock Name="CallStateText" Background="Transparent" Foreground="White" FontSize="11" Margin="10,25,10,0" FontWeight="Bold"></TextBlock>
+        </StackPanel>
+    </Grid>
+</Window>

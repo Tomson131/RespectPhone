@@ -1,0 +1,115 @@
+﻿<Window x:Class="RespectPhone.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RespectPhone"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="380" Width="300" Margin="0" Padding="0" ResizeMode="NoResize" Background="Transparent" StateChanged="Window_StateChanged" WindowStyle="None" GotFocus="Window_GotFocus" Unloaded="Window_Unloaded">
+        
+    <Grid>
+        
+        <Grid MouseDown="Grid_MouseDown" VerticalAlignment="Top" Height="20" Background="#FF303030">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Border Width="20" Height="20" Background="Red" Cursor="Hand" MouseDown="Border_MouseDown" CornerRadius="10">
+                    <Label Padding="0" HorizontalAlignment="Center">x</Label></Border>
+            </StackPanel>
+        </Grid>
+        <StackPanel Margin="0,10,0,0">
+            
+            <Grid Margin="20">
+                <StackPanel Orientation="Horizontal" >
+                    <Border Name="ImgStat0" Width="20" Height="20" Background="Red" CornerRadius="10"></Border>
+                    <Border Visibility="Collapsed" Name="ImgStat1" Width="20" Height="20" Background="Green" CornerRadius="10"></Border>
+                    <Label Foreground="#FFF" Name="StatLabel" Content="Отключен">
+                        <Label.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Подключиться" Click="MenuItem_Click"></MenuItem>
+                                <MenuItem Header="Отключиться" Click="MenuItem_Click_1"></MenuItem>
+                            </ContextMenu>
+                        </Label.ContextMenu>
+                    </Label>
+                </StackPanel>
+            </Grid>
+            <Grid>
+                <Label Name="Time"  Foreground="#FFF" HorizontalAlignment="Center" ></Label>
+                <TextBox Name="Num" FontSize="25" Margin="20,25,20,20">
+
+                </TextBox>
+            </Grid>
+            <Grid>
+                <Grid Margin="20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                        <ColumnDefinition Width="*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"></RowDefinition>
+                        <RowDefinition Height="30"></RowDefinition>
+                        <RowDefinition Height="30"></RowDefinition>
+                        <RowDefinition Height="30"></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0" Grid.Column="0">
+                        <Button Cursor="Hand" Tag="1" Click="Num_Button_Click" Background="Gray" BorderThickness="1" BorderBrush="Black" Foreground="#FFF" FontSize="16">1</Button>
+                    </Grid>
+                    <Grid Grid.Row="0" Grid.Column="1">
+                        <Button  Cursor="Hand" Tag="2" Click="Num_Button_Click" Background="Gray" BorderThickness="1" BorderBrush="Black" Foreground="#FFF" FontSize="16">2</Button>
+                    </Grid>
+                    <Grid Grid.Row="0" Grid.Column="2">
+                        <Button  Cursor="Hand" Tag="3" Click="Num_Button_Click" Background="Gray" BorderThickness="1" BorderBrush="Black" Foreground="#FFF" FontSize="16">3</Button>
+                    </Grid>
+                    <Grid Grid.Row="1" Grid.Column="0">
+                        <Button  Cursor="Hand" Tag="4" Click="Num_Button_Click" Background="Gray" BorderThickness="1" BorderBrush="Black" Foreground="#FFF" FontSize="16">4</Button>
+                    </Grid>
+                    <Grid Grid.Row="1" Grid.Column="1">
+                        <Button  Cursor="Hand" Tag="5" Click="Num_Button_Click" Background="Gray" BorderThickness="1" BorderBrush="Black" Foreground="#FFF" FontSize="16">5</Button>
+                    </Grid>
+                    <Grid Grid.Row="1" Grid.Column="2">
+                        <Button  Cursor="Hand" Tag="6" Click="Num_Button_Click" Background="Gray" BorderThickness="1" BorderBrush="Black" Foreground="#FFF" FontSize="16">6</Button>
+                    </Grid>
+                    <Grid Grid.Row="2" Grid.Column="0">
+                        <Button Cursor="Hand"  Tag="7" Click="Num_Button_Click" Background="Gray" BorderThickness="1" BorderBrush="Black" Foreground="#FFF" FontSize="16">7</Button>
+                    </Grid>
+                    <Grid Grid.Row="2" Grid.Column="1">
+                        <Button Cursor="Hand"  Tag="8" Click="Num_Button_Click" Background="Gray" BorderThickness="1" BorderBrush="Black" Foreground="#FFF" FontSize="16">8</Button>
+                    </Grid>
+                    <Grid Grid.Row="2" Grid.Column="2">
+                        <Button Cursor="Hand"  Tag="9" Click="Num_Button_Click" Background="Gray" BorderThickness="1" BorderBrush="Black" Foreground="#FFF" FontSize="16">9</Button>
+                    </Grid>
+                    <Grid Grid.Row="3" Grid.Column="2">
+                        <Button  Cursor="Hand" Name="CallBtn" Tag="call" Click="Num_Button_Click" Background="Transparent" BorderThickness="0.5" BorderBrush="Black" Foreground="#FFF" FontSize="16">
+                            <Image Height="25" HorizontalAlignment="Center" VerticalAlignment="Center" Source="pack://siteoforigin:,,,/Resources/phone_up.png"></Image>
+                        </Button>
+                    </Grid>
+                    <Grid Grid.Row="3" Grid.Column="1">
+                        <Button  Cursor="Hand" Tag="0" Click="Num_Button_Click" Background="Gray" BorderThickness="1" BorderBrush="Black" Foreground="#FFF" FontSize="16">0</Button>
+                    </Grid>
+                    <Grid Grid.Row="3" Grid.Column="0">
+                        <Button  Cursor="Hand" Name="HangUpBtn" Tag="x" Click="Num_Button_Click" Background="Transparent" BorderThickness="0.5" BorderBrush="Black" Foreground="#FFF" FontSize="16">
+                            <Image Height="25" HorizontalAlignment="Center" VerticalAlignment="Center" Source="pack://siteoforigin:,,,/Resources/phone_down.png"></Image>
+                        </Button>
+                    </Grid>
+                </Grid>
+
+            </Grid>
+            <StackPanel Orientation="Horizontal">
+                <Button Name="MicOn" Click="MicOn_Click" Cursor="Hand" BorderThickness="0" Background="Transparent">
+                    <Image Height="25" Source="pack://siteoforigin:,,,/Resources/m_on.png"></Image>
+                </Button>
+                <Button Name="MicOff" Click="MicOff_Click" Visibility="Collapsed" Cursor="Hand" BorderThickness="0" Background="Transparent">
+                    <Image Height="25" Source="pack://siteoforigin:,,,/Resources/m_off.png"></Image>
+                </Button>
+                <Button Name="SpOn" Click="SpOn_Click" Cursor="Hand" BorderThickness="0" Background="Transparent">
+                    <Image Height="25" Source="pack://siteoforigin:,,,/Resources/sp_on.png"></Image>
+                </Button>
+                <Button Name="SpOff" Click="SpOff_Click" Visibility="Collapsed" Cursor="Hand" BorderThickness="0" Background="Transparent">
+                    <Image Height="25" Source="pack://siteoforigin:,,,/Resources/sp_off.png"></Image>
+                </Button>
+                <Button Name="TransferBtn" Click="TransferBtn_Click" Visibility="Visible" Cursor="Hand" BorderThickness="0" Background="Transparent">
+                    <Image Height="25" Source="pack://siteoforigin:,,,/Resources/transfer.png"></Image>
+                </Button>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>
