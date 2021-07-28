@@ -1,4 +1,5 @@
 ﻿using Ozeki.VoIP;
+using RespectPhone.Connections;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,18 +32,28 @@ namespace RespectPhone
         public MainWindow()
         {
             InitializeComponent();
+            
+        }
+
+        public async void Login()
+        {
             RespSIPAccount.ReadConf();
+            var w = await WebAPIRequest.RespLogin();
+            RespSIPAccount.INS.SetExt(w);
+
             Phone = new SoftPhone(RespSIPAccount.INS, "");
             Phone.IncomingCallReceived += IncomingCall;
             Phone.RegisterStateChanged += RegisterStateChanged;
             GlobalEvent.INS.RiseAction += RiseAction;
-        
+
             timer.Interval = 1000;
             timer.Elapsed += TimerTick;
             timer.Enabled = true;
             timer.Stop();
             InitNotIcon();
+
         }
+
         public void InitNotIcon()
         {
             nIcon.Icon = RespectPhone.Properties.Resources.phico;
