@@ -8,11 +8,26 @@ using System.Threading.Tasks;
 
 namespace RespectPhone
 {
+    public class WebLogin
+    {
+        public string extension { get; set; } = "";
+        public string secret { get; set; } = "";
+        public string host{ get; set; } = "";
+        public string port { get; set; } = "";
+        public string name { get; set; } = "";
+        public bool isLogin { get; set; } = false;
+        public WebLogin()
+        {
+        }
+    }
     public class RespSIPAccount
     {
         public static RespSIPAccount _ins;
         public static string conf_file = "aster_ari.config";
 
+        [JsonIgnore]
+        public bool isLogin = false;
+        
 
         public static RespSIPAccount INS
         {
@@ -23,7 +38,23 @@ namespace RespectPhone
                 return _ins;
             }
         }
+
+        internal string base_url { get; set; }= "https://e.respectrb.ru/api/aster_sip_detail/";
         public bool registrationRequired { get; set; } = true;
+
+        public void SetExt(WebLogin w)
+        {
+            if (!w.isLogin) return;
+
+            isLogin = w.isLogin;
+            userName = w.extension;
+            authenticationId = w.extension;
+            displayName = w.name;
+            domainHost = w.host + ":" + w.port;
+            registerPassword = w.secret;
+
+        }
+
         public string displayName { get; set; } = "test";
         public string userName { get; set; } = "4777";
         public string authenticationId { get; set; } = "4777";

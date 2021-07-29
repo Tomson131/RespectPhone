@@ -67,7 +67,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="CallHandlerSample.cs" />
+    <Compile Include="Connections\MultiPostSend.cs" />
+    <Compile Include="Connections\WebRequest.cs" />
     <Compile Include="GlobalEvent.cs" />
+    <Compile Include="Helpers\JSONHelper.cs" />
     <Compile Include="IncomingCall.xaml.cs">
       <DependentUpon>IncomingCall.xaml</DependentUpon>
     </Compile>
