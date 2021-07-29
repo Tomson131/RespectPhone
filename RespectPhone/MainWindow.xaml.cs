@@ -48,8 +48,18 @@ namespace RespectPhone
             nIcon.Icon = RespectPhone.Properties.Resources.phico;
             nIcon.Visible = true;
             nIcon.Click += nIcon_Click;
+            var cm = new System.Windows.Forms.ContextMenu();
+            cm.MenuItems.Add("Exit", ClickClose);
+            nIcon.ContextMenu = cm;
 
         }
+
+        private void ClickClose(object sender, EventArgs e)
+        {
+            Phone.UnRegister();
+            this.Close();
+        }
+
         private void nIcon_Click(object sender, EventArgs e)
         {
             // throw new NotImplementedException();
@@ -230,8 +240,10 @@ namespace RespectPhone
 
         private void Border_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            Phone.UnRegister();
-            this.Close();
+            if (this.WindowState != WindowState.Minimized)
+                this.WindowState = WindowState.Minimized;
+            else
+                this.WindowState = WindowState.Normal;
         }
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
