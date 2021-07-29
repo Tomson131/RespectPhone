@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
@@ -32,15 +33,34 @@ namespace RespectPhone
         public MainWindow()
         {
             InitializeComponent();
-            
+            InitNotIcon();
+            Login();
         }
 
-        public async void Login()
+        public async void Login(bool first=true)
         {
-            RespSIPAccount.ReadConf();
-            var w = await WebAPIRequest.RespLogin();
-            RespSIPAccount.INS.SetExt(w);
+            var w = new WebLogin();
+            mLogin.Text = RespSIPAccount.INS.rlogin;
+            mPass.Text = RespSIPAccount.INS.rpass;
+            SetLoader(1);
+            if (first)
+                RespSIPAccount.ReadConf();
+            if (!RespSIPAccount.INS.UseConfExtension)
+            {
+                w = await WebAPIRequest.RespLogin();
+                if (!w.isLogin)
+                {
+                    LoginGrid.Visibility = Visibility.Visible;
+                    mMainGrid.Visibility = Visibility.Hidden;
+                    SetLoader(0);
+                    return;
+                }
+            }
 
+            LoginGrid.Visibility = Visibility.Hidden;
+            mMainGrid.Visibility = Visibility.Visible;
+            if(!RespSIPAccount.INS.UseConfExtension)
+                RespSIPAccount.INS.SetExt(w);
             Phone = new SoftPhone(RespSIPAccount.INS, "");
             Phone.IncomingCallReceived += IncomingCall;
             Phone.RegisterStateChanged += RegisterStateChanged;
@@ -50,8 +70,8 @@ namespace RespectPhone
             timer.Elapsed += TimerTick;
             timer.Enabled = true;
             timer.Stop();
-            InitNotIcon();
-
+            
+            SetLoader(0);
         }
 
         public void InitNotIcon()
@@ -67,6 +87,7 @@ namespace RespectPhone
 
         private void ClickClose(object sender, EventArgs e)
         {
+            RespSIPAccount.INS.SaveToFile();
             Phone.UnRegister();
             this.Close();
         }
@@ -133,9 +154,13 @@ namespace RespectPhone
                     case CallState.Busy:
                     case CallState.Completed:
                         StopTimer();
+                        CallBtn.Visibility = Visibility.Visible;
                         break;
                     case CallState.InCall:
                         StartTimer();
+
+                        break;
+                    case CallState.Ringing:
 
                         break;
                 }
@@ -164,10 +189,25 @@ namespace RespectPhone
                 }
                 else
                 {
-                    IncomingCall ic = new IncomingCall(e.Item);
-                    Num.Text = e.Item.DialInfo.CallerID;
-                    ic.Show();
-                    ic.Topmost = true;
+                    if (RespSIPAccount.INS.AnswerMyExt)
+                    {
+                        if(e.Item.DialInfo.CallerID==RespSIPAccount.INS.authenticationId)
+                            e.Item.Answer();
+                        else
+                        {
+                            IncomingCall ic = new IncomingCall(e.Item);
+                            Num.Text = e.Item.DialInfo.CallerID;
+                            ic.Show();
+                            ic.Topmost = true;
+                        }
+                    }
+                    else
+                    {
+                        IncomingCall ic = new IncomingCall(e.Item);
+                        Num.Text = e.Item.DialInfo.CallerID;
+                        ic.Show();
+                        ic.Topmost = true;
+                    }
                 }
             }));
         }
@@ -336,6 +376,41 @@ namespace RespectPhone
             if (e.Key == Key.Enter)
             {
                 Num_Button_Click(CallBtn, null);
+            }
+        }
+
+        private  void Login_Click(object sender, RoutedEventArgs e)
+        {
+            RespSIPAccount.INS.rlogin = mLogin.Text.Trim();
+            RespSIPAccount.INS.rpass= mPass.Text.Trim();
+            Login(false);
+        }
+
+        public void SetLoader(int x)
+        {
+            if (x == 1)
+            {
+                Thread th = new Thread(() => {
+                    Dispatcher.BeginInvoke((Action)(() =>
+                    {
+                        Loader.Children.Clear();
+                        Loader ld = new Loader();
+                        Loader.Children.Add(ld);
+                        Loader.Visibility = Visibility.Visible;
+                    }));
+                });
+                th.Start();
+            }
+            else
+            {
+                Thread th = new Thread(() => {
+                    Dispatcher.BeginInvoke((Action)(() =>
+                    {
+                        Loader.Children.Clear();
+                        Loader.Visibility = Visibility.Collapsed;
+                    }));
+                });
+                th.Start();
             }
         }
     }

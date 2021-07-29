@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RespectPhone"
         mc:Ignorable="d"
-        Title="MainWindow" Height="380" Width="300" Margin="0" Padding="0" ResizeMode="NoResize" Background="Transparent" StateChanged="Window_StateChanged" WindowStyle="None" GotFocus="Window_GotFocus" Unloaded="Window_Unloaded">
+        Title="MainWindow" Height="380" Width="400" Margin="0" Padding="0" ResizeMode="NoResize" Background="Transparent" StateChanged="Window_StateChanged" WindowStyle="None" GotFocus="Window_GotFocus" Unloaded="Window_Unloaded">
         
     <Grid>
         
@@ -15,7 +15,7 @@
                     <Label Padding="0" HorizontalAlignment="Center">x</Label></Border>
             </StackPanel>
         </Grid>
-        <StackPanel Margin="0,10,0,0">
+        <StackPanel Name="mMainGrid" Margin="0,10,0,0">
             
             <Grid Margin="20">
                 <StackPanel Orientation="Horizontal" >
@@ -95,28 +95,105 @@
             </Grid>
             <StackPanel Orientation="Horizontal">
                 <Button Name="MicOn" Click="MicOn_Click" Cursor="Hand" BorderThickness="0" Background="Transparent">
-                    <Image Height="25" Source="pack://siteoforigin:,,,/Resources/m_on.png"></Image>
+                    <Image Height="25" Source="pack://siteoforigin:,,,/Resources/m_on.png">
+                        <Image.ToolTip>
+                            <ToolTip>
+                                <Label>
+                                    Отключить микрофон
+                                </Label>
+                            </ToolTip>
+                        </Image.ToolTip>
+                    </Image>
                 </Button>
                 <Button Name="MicOff" Click="MicOff_Click" Visibility="Collapsed" Cursor="Hand" BorderThickness="0" Background="Transparent">
-                    <Image Height="25" Source="pack://siteoforigin:,,,/Resources/m_off.png"></Image>
+                    <Image Height="25" Source="pack://siteoforigin:,,,/Resources/m_off.png">
+                        <Image.ToolTip>
+                            <ToolTip>
+                                <Label>
+                                    Включить микрофон
+                                </Label>
+                            </ToolTip>
+                        </Image.ToolTip>
+                    </Image>
                 </Button>
                 <Button Name="SpOn" Click="SpOn_Click" Cursor="Hand" BorderThickness="0" Background="Transparent">
-                    <Image Height="25" Source="pack://siteoforigin:,,,/Resources/sp_on.png"></Image>
+                    <Image Height="25" Source="pack://siteoforigin:,,,/Resources/sp_on.png">
+                        <Image.ToolTip>
+                            <ToolTip>
+                                <Label>
+                                    Отключить звук
+                                </Label>
+                            </ToolTip>
+                        </Image.ToolTip>
+                    </Image>
                 </Button>
                 <Button Name="SpOff" Click="SpOff_Click" Visibility="Collapsed" Cursor="Hand" BorderThickness="0" Background="Transparent">
-                    <Image Height="25" Source="pack://siteoforigin:,,,/Resources/sp_off.png"></Image>
+                    <Image Height="25" Source="pack://siteoforigin:,,,/Resources/sp_off.png">
+                        <Image.ToolTip>
+                            <ToolTip>
+                                <Label>
+                                    Включить звук
+                                </Label>
+                            </ToolTip>
+                        </Image.ToolTip>
+                    </Image>
                 </Button>
                 <Button Name="TransferBtn" Click="TransferBtn_Click" Visibility="Visible" Cursor="Hand" BorderThickness="0" Background="Transparent">
-                    <Image Height="25" Source="pack://siteoforigin:,,,/Resources/transfer.png"></Image>
+                    <Image Height="25" Source="pack://siteoforigin:,,,/Resources/transfer.png">
+                        <Image.ToolTip>
+                            <ToolTip>
+                                <Label>
+                                    Перевести звонок
+                                </Label>
+                            </ToolTip>
+                        </Image.ToolTip>
+                    </Image>
                 </Button>
 
                 <Button Name="AutoAnswerOn" Click="AutoAnswerOn_Click" Visibility="Collapsed" Cursor="Hand" BorderThickness="0" Background="Transparent">
-                    <Image Height="25" Source="pack://siteoforigin:,,,/Resources/aa_on.png"></Image>
+                    <Image Height="25" Source="pack://siteoforigin:,,,/Resources/aa_on.png">
+                        <Image.ToolTip>
+                            <ToolTip>
+                                <Label>
+                                    Отключить автоответ
+                                </Label>
+                            </ToolTip>
+                        </Image.ToolTip>
+                    </Image>
                 </Button>
                 <Button Name="AutoAnswerOff" Click="AutoAnswerOff_Click" Visibility="Visible" Cursor="Hand" BorderThickness="0" Background="Transparent">
-                    <Image Height="25" Source="pack://siteoforigin:,,,/Resources/aa_off.png"></Image>
+                    <Image Height="25" Source="pack://siteoforigin:,,,/Resources/aa_off.png">
+                        <Image.ToolTip>
+                            <ToolTip>
+                                <Label>
+                                    Включить автоответ
+                                </Label>
+                            </ToolTip>
+                        </Image.ToolTip>
+                    </Image>
                 </Button>
             </StackPanel>
         </StackPanel>
+        <Grid Margin="0,20,0,0" Name="LoginGrid" Visibility="Collapsed" Background="Black">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <StackPanel Orientation="Horizontal">
+                    <Label Foreground="#FFF">Логин</Label>
+                    <TextBox Foreground="#FFF" CaretBrush="#FFF" IsReadOnly="False" Background="Black" Width="200" Name="mLogin" Margin="10,0,0,0"></TextBox>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Foreground="#FFF">Пароль</Label>
+                    <TextBox Foreground="#FFF" CaretBrush="#FFF" Background="Black" Width="200" Name="mPass" Margin="3,0,0,0"></TextBox>
+                </StackPanel>
+                <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                    <Button Cursor="Hand" Background="Transparent" BorderThickness="0" Click="Login_Click">
+                        <Border CornerRadius="10" Background="Green">
+                            <Label Foreground="#FFF">Войти</Label>
+                        </Border></Button>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+        <Grid Name="Loader">
+            
+        </Grid>
     </Grid>
 </Window>

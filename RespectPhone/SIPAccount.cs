@@ -61,10 +61,11 @@ namespace RespectPhone
         public string registerPassword { get; set; } = "1q2w3e4r";
         public string domainHost { get; set; } = "aster.institutrb.ru:5160";
         public string domainPort { get; set; } = "";
-        public string rlogin { get; set; } = "";
-        public string rpass { get; set; } = "";
+        public string rlogin { get; set; } = "test";
+        public string rpass { get; set; } = "test";
 
-
+        public bool AnswerMyExt { get; set; } = true;
+        public bool UseConfExtension { get; set; } = false;
         public static void ReadConf()
         {
             try
@@ -87,6 +88,19 @@ namespace RespectPhone
                 Console.WriteLine(ex.Message);
             }
         }      
+
+        public void SaveToFile()
+        {
+            try
+            {
+                File.WriteAllText(conf_file, JsonConvert.SerializeObject(INS));
+            }
+            catch (Exception ex)
+            {
+
+                
+            }
+        }
         private void ParseConf(string c)
         {
             try

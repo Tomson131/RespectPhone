@@ -59,7 +59,7 @@ namespace RespectPhone
         {
             try
             {
-                softPhone = SoftPhoneFactory.CreateSoftPhone(5000, 10000);
+                softPhone = SoftPhoneFactory.CreateSoftPhone(10000, 30000);
                 softPhone.IncomingCall += softPhone_IncomingCall;
                 var account = new SIPAccount(true, acc.displayName, acc.userName, acc.authenticationId, acc.registerPassword, acc.domainHost);
                 phoneLine = softPhone.CreatePhoneLine(account);                
