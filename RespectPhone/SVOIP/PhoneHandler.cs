@@ -259,8 +259,11 @@ namespace RespectPhone.SVOIP
         }
         public void CancelTransfer()
         {
-            sipAgent.TakeOffHold();                     
-           // transferSipAgent.Hangup();            
+            sipAgent.TakeOffHold(); try
+            {
+                transferSipAgent.Hangup();
+            }
+            catch { }
             isTransferAttended = false;
 
         }
