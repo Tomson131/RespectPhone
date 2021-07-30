@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+/*
 using Ozeki.Media.MediaHandlers;
 using Ozeki.VoIP;
-using Ozeki.VoIP.SDK;
+using Ozeki.VoIP.SDK;*/
 
 namespace RespectPhone
 {
-    class SoftPhone
+    /*class SoftPhoneOld
     {
         private ISoftPhone softPhone;
         private IPhoneLine phoneLine;
@@ -324,4 +326,5 @@ namespace RespectPhone
             WireDownCallEvents();
         }
     }
+    */
 }

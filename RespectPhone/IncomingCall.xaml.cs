@@ -1,4 +1,5 @@
-﻿using Ozeki.VoIP;
+﻿
+using SIPSorcery.SIP;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,10 +22,14 @@ namespace RespectPhone
     public partial class IncomingCall : Window
     {
         MediaPlayer snd;
-        public IncomingCall(ICall call)
+        public IncomingCall(object call)
         {
+            SIPRequest c = null;
+            if (call is SIPRequest)
+                c = (SIPRequest)call;
             InitializeComponent();
-            Caller.Text = call.DialInfo.CallerDisplay + " " + call.DialInfo.CallerID;
+            if(c!=null)
+                Caller.Text =  c.Header.From.FromName;// call.DialInfo.CallerDisplay + " " + call.DialInfo.CallerID;
             GlobalEvent.INS.RiseAction += RiseAction;
             PlayRing();
         }

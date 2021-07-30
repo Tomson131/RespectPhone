@@ -1,5 +1,6 @@
-﻿using Ozeki.VoIP;
-using RespectPhone.Connections;
+﻿using RespectPhone.Connections;
+using RespectPhone.SVOIP;
+using SIPSorcery.SIP;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WPFTEST;
 
 namespace RespectPhone
 {
@@ -24,7 +26,7 @@ namespace RespectPhone
     /// </summary>
     public partial class MainWindow : Window
     {
-        SoftPhone Phone;
+        IRespPhone Phone;
         bool transferOn = false;
         int seconds = 0;
         System.Timers.Timer timer = new System.Timers.Timer();
@@ -61,7 +63,7 @@ namespace RespectPhone
             mMainGrid.Visibility = Visibility.Visible;
             if(!RespSIPAccount.INS.UseConfExtension)
                 RespSIPAccount.INS.SetExt(w);
-            Phone = new SoftPhone(RespSIPAccount.INS, "");
+            Phone = new PhoneHandler(RespSIPAccount.INS);
             Phone.IncomingCallReceived += IncomingCall;
             Phone.RegisterStateChanged += RegisterStateChanged;
             GlobalEvent.INS.RiseAction += RiseAction;
@@ -168,9 +170,10 @@ namespace RespectPhone
         }
 
 
-        private void RegisterStateChanged(object sender, VoIPEventArgs<RegistrationStateChangedArgs> e)
+        private void RegisterStateChanged(object sender, object e)
         {
-            if (e.Item.State == RegState.RegistrationSucceeded)
+            if(e is RegState)
+            if ((RegState)e == RegState.RegistrationSucceeded)
                 ChangeStatusLabel(true);
             else
             {
@@ -178,33 +181,37 @@ namespace RespectPhone
             }
         }
 
-        private void IncomingCall(object sender, VoIPEventArgs<IPhoneCall> e)
+        private void IncomingCall(object sender, object e)
         {
-            Console.WriteLine("call " + e.Item.CallID);
+            Console.WriteLine("call " + e.ToString()); /// need to parse 
+            SIPRequest c = null;
+            if (e is SIPRequest)
+                c = (SIPRequest)e;
+
             Dispatcher.BeginInvoke((Action)(() => {
                 if (this.WindowState == WindowState.Minimized)
                     this.WindowState = WindowState.Normal;
                 if (auto_answer) {
-                    e.Item.Answer();
+                    Phone.AnswerIncoming();
                 }
                 else
                 {
                     if (RespSIPAccount.INS.AnswerMyExt)
                     {
-                        if(e.Item.DialInfo.CallerID==RespSIPAccount.INS.authenticationId)
-                            e.Item.Answer();
+                        if (c.Header.From.FromName == RespSIPAccount.INS.authenticationId)
+                            Phone.AnswerIncoming();
                         else
                         {
-                            IncomingCall ic = new IncomingCall(e.Item);
-                            Num.Text = e.Item.DialInfo.CallerID;
+                            IncomingCall ic = new IncomingCall(e);
+                            // Num.Text = e.ToString();
                             ic.Show();
                             ic.Topmost = true;
                         }
                     }
                     else
                     {
-                        IncomingCall ic = new IncomingCall(e.Item);
-                        Num.Text = e.Item.DialInfo.CallerID;
+                        IncomingCall ic = new IncomingCall(e);
+                       // Num.Text = e.ToString();
                         ic.Show();
                         ic.Topmost = true;
                     }
@@ -346,7 +353,7 @@ namespace RespectPhone
 
         private void Window_Unloaded(object sender, RoutedEventArgs e)
         {
-            Phone.UregAll();
+          //  Phone.UregAll();
         }
 
         private void Window_StateChanged(object sender, EventArgs e)

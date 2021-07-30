@@ -65,7 +65,7 @@ namespace RespectPhone
         public string rpass { get; set; } = "test";
 
         public bool AnswerMyExt { get; set; } = true;
-        public bool UseConfExtension { get; set; } = false;
+        public bool UseConfExtension { get; set; } = true;
         public static void ReadConf()
         {
             try
