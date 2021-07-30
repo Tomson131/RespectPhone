@@ -8,6 +8,8 @@ namespace WPFTEST
 {
     public interface IRespPhone
     {
+        bool InCall { get; }
+        bool isTransferAttended { get; }
         void Call(string num);
         void TransferCall(string num);
         void HangUp();
@@ -16,7 +18,10 @@ namespace WPFTEST
         void ReRegister();
         void UnRegister();
         void AnswerIncoming(bool reject = false);
+        void ContinueTransfer();
 
+        void CancelTransfer();
+        
         event EventHandler<object> IncomingCallReceived;
         event EventHandler<object> RegisterStateChanged;
         event EventHandler<object> RegistrationSucceded;

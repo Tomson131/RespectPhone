@@ -12,11 +12,13 @@ namespace RespectPhone
 
     public enum CallState
     {
+        None,
           Cancelled,
           Busy,
           Completed,
           InCall,
-          Ringing, 
+          Ringing,
+        Trying,
           Answered
     }
     public enum RegState

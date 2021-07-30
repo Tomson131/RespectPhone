@@ -66,6 +66,7 @@ namespace RespectPhone
             Phone = new PhoneHandler(RespSIPAccount.INS);
             Phone.IncomingCallReceived += IncomingCall;
             Phone.RegisterStateChanged += RegisterStateChanged;
+            Phone.CallStateCange += Phone_CallStateCange;
             GlobalEvent.INS.RiseAction += RiseAction;
 
             timer.Interval = 1000;
@@ -74,6 +75,11 @@ namespace RespectPhone
             timer.Stop();
             
             SetLoader(0);
+        }
+
+        private void Phone_CallStateCange(object sender, object e)
+        {
+            GlobalEvent.Event(sender,Events.CallStateChanged ,e);
         }
 
         public void InitNotIcon()
@@ -156,14 +162,22 @@ namespace RespectPhone
                     case CallState.Busy:
                     case CallState.Completed:
                         StopTimer();
-                        CallBtn.Visibility = Visibility.Visible;
+                        Dispatcher.BeginInvoke((Action)(() =>
+                        {
+                            CallBtn.Visibility = Visibility.Visible;
+                        }));
                         break;
                     case CallState.InCall:
-                        StartTimer();
+                        if(Phone.InCall)
+                            StartTimer();
 
                         break;
                     case CallState.Ringing:
-
+                        Dispatcher.BeginInvoke((Action)(() =>
+                        {
+                            Time.Content = "Calling...";
+                        }));
+                       
                         break;
                 }
             }
@@ -198,7 +212,7 @@ namespace RespectPhone
                 {
                     if (RespSIPAccount.INS.AnswerMyExt)
                     {
-                        if (c.Header.From.FromName == RespSIPAccount.INS.authenticationId)
+                        if (c.Header.From.FromName == RespSIPAccount.INS.authenticationId || c.Header.From.FromURI.ToString().Contains(RespSIPAccount.INS.authenticationId+"@"))
                             Phone.AnswerIncoming();
                         else
                         {
@@ -279,9 +293,17 @@ namespace RespectPhone
                     CallBtn.Visibility = Visibility.Collapsed;
                     break;
                 case "x":
-                    Num.Text = "";
-                    CallBtn.Visibility = Visibility.Visible;
-                    Phone.HangUp();
+                    if (Phone.isTransferAttended)
+                    {
+                        Phone.ContinueTransfer();
+                    }
+                    else
+                    {
+                        Num.Text = "";
+                        StopTimer();
+                        CallBtn.Visibility = Visibility.Visible;
+                        Phone.HangUp();
+                    }
                     break;                    
             }
         }
@@ -341,9 +363,17 @@ namespace RespectPhone
 
         private void TransferBtn_Click(object sender, RoutedEventArgs e)
         {
-            Num.Text = "";
-            CallBtn.Visibility = Visibility.Visible;
-            transferOn = true;
+            if (Phone.isTransferAttended)
+            {
+                Phone.CancelTransfer();
+                transferOn = false;
+            }
+            else
+            {
+                Num.Text = "";
+                CallBtn.Visibility = Visibility.Visible;
+                transferOn = true;
+            }
         }
 
         private void Window_GotFocus(object sender, RoutedEventArgs e)

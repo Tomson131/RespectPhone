@@ -21,11 +21,20 @@ namespace RespectPhone.SVOIP
         public static SipTransporManager transport = SipTransporManager.INS;
         SIPRegistrationUserAgent regAgent;
         SIPUserAgent sipAgent;
+        SIPUserAgent transferSipAgent;
         SSipAccount sacc;
-        SIPServerUserAgent incoming_server;       
+        SIPServerUserAgent incoming_server;
+        bool micOn = true;
+        bool spOn = true;
+        public bool isTransferAttended = false;
         VoIPMediaSession voipMediaSession { get { return CreateMediaSession(); } }
-        System.Threading.CancellationToken transfer_cancel = new System.Threading.CancellationToken();
 
+        public bool InCall { get { return sipAgent.IsCallActive || sipAgent.IsRinging; } }
+
+        bool IRespPhone.isTransferAttended { get { return isTransferAttended; } }
+
+        System.Threading.CancellationToken transfer_cancel = new System.Threading.CancellationToken();
+        public CallState CallState = CallState.None;
         public PhoneHandler()
         {
 
@@ -38,24 +47,63 @@ namespace RespectPhone.SVOIP
             url = acc.domainHost;
             sacc = new SSipAccount(user, pass, url);
             transport.SipRequestReseived += SIPLOG;
-
+            transport.SipResponseReseivedz += SIPRESPLOG;
 
             regAgent = new SIPRegistrationUserAgent(transport.SIPTransport, user, pass, url, 120);
             regAgent.RegistrationFailed += RegistrationFailed;
             regAgent.RegistrationRemoved += RegistrationRemoved;
             regAgent.RegistrationSuccessful += RegistrationSuccessful;
             regAgent.RegistrationTemporaryFailure += RegistrationTemporaryFailure;
-            
 
-          
 
+
+            transferSipAgent = new SIPUserAgent(transport.SIPTransport, null, true, sacc);
 
             sipAgent = new SIPUserAgent(transport.SIPTransport, null, true, sacc);
             sipAgent.OnIncomingCall += IncoimingCallReceive;
 
+            sipAgent.ClientCallAnswered += SipAgent_ClientCallAnswered;
+            sipAgent.ClientCallFailed += SipAgent_ClientCallFailed;
+            sipAgent.ClientCallRinging += SipAgent_ClientCallRinging;
+            sipAgent.ClientCallTrying += SipAgent_ClientCallTrying;
             regAgent.Start();
 
 
+        }
+
+        private void SIPRESPLOG(object sender, SIPResponse e)
+        {
+            switch (e.Status)
+            {
+                case SIPResponseStatusCodesEnum.SessionProgress:
+                case SIPResponseStatusCodesEnum.Ringing:
+                    CallStateCange?.Invoke(this, CallState.Ringing);
+                    break;
+                case SIPResponseStatusCodesEnum.Ok:
+                    CallStateCange?.Invoke(this, CallState.InCall);
+                    break;
+                
+            }
+        }
+
+        private void SipAgent_ClientCallTrying(ISIPClientUserAgent uac, SIPResponse sipResponse)
+        {
+            CallStateCange?.Invoke(this, CallState.Trying);
+        }
+
+        private void SipAgent_ClientCallRinging(ISIPClientUserAgent uac, SIPResponse sipResponse)
+        {
+            CallStateCange?.Invoke(this, CallState.Ringing);
+        }
+
+        private void SipAgent_ClientCallFailed(ISIPClientUserAgent uac, string errorMessage, SIPResponse sipResponse)
+        {
+            CallStateCange?.Invoke(this, CallState.Cancelled);
+        }
+
+        private void SipAgent_ClientCallAnswered(ISIPClientUserAgent uac, SIPResponse sipResponse)
+        {
+            CallStateCange?.Invoke(this, CallState.Answered);
         }
 
         private VoIPMediaSession CreateMediaSession()
@@ -83,6 +131,9 @@ namespace RespectPhone.SVOIP
 
         private void SIPLOG(object sender, SIPRequest e)
         {
+
+            if(e.Method==SIPMethodsEnum.BYE)
+                CallStateCange?.Invoke(this, CallState.Completed);
             if (e.Method == SIPMethodsEnum.OPTIONS) return;
             Console.WriteLine("=============================");
             Console.WriteLine(e.Method);
@@ -172,6 +223,47 @@ namespace RespectPhone.SVOIP
             }
         }
 
+        public async void TransferAttended(string num)
+        {
+            if (sipAgent.IsCallActive)
+            {
+                sipAgent.PutOnHold();
+                var dest = num + "@" + url;
+              
+                var res = await transferSipAgent.Call(dest, user, pass, voipMediaSession);
+                if (res)
+                {
+                    isTransferAttended = true;
+                }
+                else
+                {
+                    sipAgent.TakeOffHold();
+                }
+            }
+        }
+        public void ContinueTransfer()
+        {
+            ContinueTransferAsync();
+
+        }
+        public async void ContinueTransferAsync()
+        {
+            var tres = await transferSipAgent.AttendedTransfer(sipAgent.Dialogue, new TimeSpan(100000), transfer_cancel);
+            if (tres)
+            {
+                transferSipAgent.Hangup();
+                CallStateCange?.Invoke(this, CallState.Completed);
+                isTransferAttended = false;
+            }
+
+        }
+        public void CancelTransfer()
+        {
+            sipAgent.TakeOffHold();                     
+           // transferSipAgent.Hangup();            
+            isTransferAttended = false;
+
+        }
         public void Dispose()
         {
             throw new NotImplementedException();
@@ -179,44 +271,74 @@ namespace RespectPhone.SVOIP
 
         public void HangUp()
         {
-            if (sipAgent.IsCallActive)
+            // if (sipAgent.IsCallActive)
+            try
+            {
                 sipAgent.Hangup();
+            }
+            catch { }
         }
 
         public void ReRegister()
         {
-            throw new NotImplementedException();
+            regAgent.Stop();
+
+            regAgent.Start();
         }
 
         public async void TransferCall(string num)
         {
+            TransferAttended(num);
+            /*
             try
             {
-                var TRANSFER_DESTINATION_SIP_URI = num;
+                var TRANSFER_DESTINATION_SIP_URI = "sip:" + num+"@"+url;
                 var transferURI = SIPURI.ParseSIPURI(TRANSFER_DESTINATION_SIP_URI);
                 bool result = await sipAgent.BlindTransfer(transferURI, TimeSpan.FromSeconds(20), transfer_cancel);
+                if (result)
+                    CallStateCange?.Invoke(this, CallState.Completed);
             }
-            catch
+            catch(Exception ex)
             {
-
-            }
+                Console.WriteLine(ex.Message);
+            }*/
         }
 
         public void TurnOnOffMic(bool on)
         {
-           
-
+            micOn = on;
+            SetAudioStatus();
         }
 
         public void TurnOnOffSpeaker(bool on)
         {
-
-           
+            spOn = on;
+            SetAudioStatus();
         }
+
+        private void SetAudioStatus()
+        {
+            if(micOn && spOn)
+            {
+                sipAgent.MediaSession.SetMediaStreamStatus(SIPSorcery.Net.SDPMediaTypesEnum.audio, SIPSorcery.Net.MediaStreamStatusEnum.SendRecv);
+            }else if(!micOn && spOn)
+            {
+                sipAgent.MediaSession.SetMediaStreamStatus(SIPSorcery.Net.SDPMediaTypesEnum.audio, SIPSorcery.Net.MediaStreamStatusEnum.RecvOnly);
+            }
+            else if (micOn && !spOn)
+            {
+                sipAgent.MediaSession.SetMediaStreamStatus(SIPSorcery.Net.SDPMediaTypesEnum.audio, SIPSorcery.Net.MediaStreamStatusEnum.SendOnly);
+            }
+            else if (!micOn && !spOn)
+            {
+                sipAgent.MediaSession.SetMediaStreamStatus(SIPSorcery.Net.SDPMediaTypesEnum.audio, SIPSorcery.Net.MediaStreamStatusEnum.Inactive);
+            }
+        }
+
 
         public void UnRegister()
         {
-            throw new NotImplementedException();
+            regAgent.Stop();
         }
         #endregion
     }

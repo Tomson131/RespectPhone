@@ -21,6 +21,7 @@ namespace WPFTEST
         public event Func<SIPRequest, bool> IncomingCall;
 
         public event EventHandler<SIPRequest> SipRequestReseived;
+        public event EventHandler<SIPResponse> SipResponseReseivedz;
         public SipTransporManager()
         {
             SIPTransport.AddSIPChannel(new SIPUDPChannel(new IPEndPoint(IPAddress.Any, HOMER_SERVER_PORT)));
@@ -34,8 +35,24 @@ namespace WPFTEST
             SIPTransport.SIPRequestOutTraceEvent += SIPRequestOutTraceEvent;
             SIPTransport.SIPResponseInTraceEvent += SIPResponseInTraceEvent;
             SIPTransport.SIPResponseOutTraceEvent += SIPResponseOutTraceEvent;
+
+            SIPTransport.SIPTransportResponseReceived += SIPTransport_SIPTransportResponseReceived;
         }
 
+        private Task SIPTransport_SIPTransportResponseReceived(SIPEndPoint localSIPEndPoint, SIPEndPoint remoteEndPoint, SIPResponse e)
+        {
+
+            SipResponseReseivedz?.Invoke(this, e);
+            Console.WriteLine("============================= RESPONSE RECEIVED =========================================");
+            Console.WriteLine("STATUS: " + e.Status);
+            Console.WriteLine("FROMNAME: " + e.Header.From.FromName);
+            Console.WriteLine("REASON: " + e.ReasonPhrase);
+            Console.WriteLine(e.Header.ToString());
+            Console.WriteLine("-----------------------------");
+            Console.WriteLine(e.Body != null ? e.Body.ToString() : "EMPTY");
+            Console.WriteLine("============================= RESPONSE END ==============================================");
+            return Task.FromResult(0);
+        }
 
         private Task SIPTransportRequestReceived(SIPEndPoint localSIPEndPoint, SIPEndPoint remoteEndPoint, SIPRequest sipRequest)
         {
@@ -78,7 +95,7 @@ namespace WPFTEST
             return Task.FromResult(0);
         }
 
-        private void SIPRequestInTraceEvent(SIPEndPoint localEP, SIPEndPoint remoteEP, SIPRequest sipRequest)
+        private void SIPRequestInTraceEvent(SIPEndPoint localEP, SIPEndPoint remoteEP, SIPRequest e)
         {
             //logger.LogDebug($"Request Received {localEP}<-{remoteEP}: {sipRequest.StatusLine}.");
 
@@ -87,31 +104,53 @@ namespace WPFTEST
             //    var hepBuffer = HepPacket.GetBytes(remoteEP, localEP, DateTime.Now, 333, "myHep", sipRequest.ToString());
             //    _homerSIPClient.SendAsync(hepBuffer, hepBuffer.Length, HOMER_SERVER_ADDRESS, HOMER_SERVER_PORT);
             //}
+            if (e.Method == SIPMethodsEnum.OPTIONS) return;
+            Console.WriteLine("=============================REQIN");
+            Console.WriteLine(e.Method);
+            Console.WriteLine(e.Header.ToString());
+            Console.WriteLine("-----------------------------");
+            Console.WriteLine(e.Body != null ? e.Body.ToString() : "EMPTY");
+            Console.WriteLine("=============================");
         }
 
-        private void SIPRequestOutTraceEvent(SIPEndPoint localEP, SIPEndPoint remoteEP, SIPRequest sipRequest)
+        private void SIPRequestOutTraceEvent(SIPEndPoint localEP, SIPEndPoint remoteEP, SIPRequest e)
         {
-           // logger.LogDebug($"Request Sent {localEP}<-{remoteEP}: {sipRequest.StatusLine}.");
+            // logger.LogDebug($"Request Sent {localEP}<-{remoteEP}: {sipRequest.StatusLine}.");
 
             //if (_homerSIPClient != null)
             //{
             //    var hepBuffer = HepPacket.GetBytes(localEP, remoteEP, DateTime.Now, 333, "myHep", sipRequest.ToString());
             //    _homerSIPClient.SendAsync(hepBuffer, hepBuffer.Length, HOMER_SERVER_ADDRESS, HOMER_SERVER_PORT);
             //}
+            Console.WriteLine("============================= REQOUT");
+            Console.WriteLine(e.Method);
+            Console.WriteLine(e.Header.ToString());
+            Console.WriteLine("-----------------------------");
+            Console.WriteLine(e.Body != null ? e.Body.ToString() : "EMPTY");
+            Console.WriteLine("=============================");
         }
 
-        private void SIPResponseInTraceEvent(SIPEndPoint localEP, SIPEndPoint remoteEP, SIPResponse sipResponse)
+        private void SIPResponseInTraceEvent(SIPEndPoint localEP, SIPEndPoint remoteEP, SIPResponse e)
         {
-           // logger.LogDebug($"Response Received {localEP}<-{remoteEP}: {sipResponse.ShortDescription}.");
+            // logger.LogDebug($"Response Received {localEP}<-{remoteEP}: {sipResponse.ShortDescription}.");
 
             //if (_homerSIPClient != null)
             //{
             //    var hepBuffer = HepPacket.GetBytes(remoteEP, localEP, DateTime.Now, 333, "myHep", sipResponse.ToString());
             //    _homerSIPClient.SendAsync(hepBuffer, hepBuffer.Length, HOMER_SERVER_ADDRESS, HOMER_SERVER_PORT);
             //}
+            SipResponseReseivedz?.Invoke(this, e);
+            Console.WriteLine("============================= RESPONSE RECEIVED =========================================");
+            Console.WriteLine("STATUS: " + e.Status);
+            Console.WriteLine("FROMNAME: " + e.Header.From.FromName);
+            Console.WriteLine("REASON: " + e.ReasonPhrase);
+            Console.WriteLine(e.Header.ToString());
+            Console.WriteLine("-----------------------------");
+            Console.WriteLine(e.Body != null ? e.Body.ToString() : "EMPTY");
+            Console.WriteLine("=============================");
         }
 
-        private void SIPResponseOutTraceEvent(SIPEndPoint localEP, SIPEndPoint remoteEP, SIPResponse sipResponse)
+        private void SIPResponseOutTraceEvent(SIPEndPoint localEP, SIPEndPoint remoteEP, SIPResponse e)
         {
             //logger.LogDebug($"Response Sent {localEP}<-{remoteEP}: {sipResponse.ShortDescription}.");
 
@@ -120,6 +159,16 @@ namespace WPFTEST
             //    var hepBuffer = HepPacket.GetBytes(localEP, remoteEP, DateTime.Now, 333, "myHep", sipResponse.ToString());
             //    _homerSIPClient.SendAsync(hepBuffer, hepBuffer.Length, HOMER_SERVER_ADDRESS, HOMER_SERVER_PORT);
             //}
+            SipResponseReseivedz?.Invoke(this, e);
+            if (e.ReasonPhrase == "MethodNotAllowed") return;
+            Console.WriteLine("============================= RESPONSE RECEIVED =========================================");
+            Console.WriteLine("STATUS: " + e.Status);
+            Console.WriteLine("FROMNAME: " + e.Header.From.FromName);
+            Console.WriteLine("REASON: " + e.ReasonPhrase);
+            Console.WriteLine(e.Header.ToString());
+            Console.WriteLine("-----------------------------");
+            Console.WriteLine(e.Body != null ? e.Body.ToString() : "EMPTY");
+            Console.WriteLine("=============================");
         }
 
     }
