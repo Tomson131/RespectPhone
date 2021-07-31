@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using WPFTEST;
 
@@ -49,15 +50,17 @@ namespace RespectPhone.SVOIP
             transport.SipRequestReseived += SIPLOG;
             transport.SipResponseReseivedz += SIPRESPLOG;
 
-            regAgent = new SIPRegistrationUserAgent(transport.SIPTransport, user, pass, url, 120);
+            regAgent = new SIPRegistrationUserAgent(transport.SIPTransport, user, pass, url, 3600);
             regAgent.RegistrationFailed += RegistrationFailed;
             regAgent.RegistrationRemoved += RegistrationRemoved;
             regAgent.RegistrationSuccessful += RegistrationSuccessful;
             regAgent.RegistrationTemporaryFailure += RegistrationTemporaryFailure;
-
+            
 
 
             transferSipAgent = new SIPUserAgent(transport.SIPTransport, null, true, sacc);
+            transferSipAgent.OnIncomingCall += TranferTransportIncomingCall;
+
 
             sipAgent = new SIPUserAgent(transport.SIPTransport, null, true, sacc);
             sipAgent.OnIncomingCall += IncoimingCallReceive;
@@ -69,6 +72,13 @@ namespace RespectPhone.SVOIP
             regAgent.Start();
 
 
+        }
+
+        
+
+        private void TranferTransportIncomingCall(SIPUserAgent arg1, SIPRequest arg2)
+        {
+            
         }
 
         private void SIPRESPLOG(object sender, SIPResponse e)
@@ -216,8 +226,8 @@ namespace RespectPhone.SVOIP
         public async void Call(string num)
         {
             if (!sipAgent.IsCallActive)
-            {                
-                voipMediaSession.AcceptRtpFromAny = true;
+            {               
+               
                 var dest = num + "@" + url;
                 bool callResult = await sipAgent.Call(dest, user, pass, voipMediaSession);
             }
@@ -228,6 +238,7 @@ namespace RespectPhone.SVOIP
             if (sipAgent.IsCallActive)
             {
                 sipAgent.PutOnHold();
+                sipAgent.MediaSession.SetMediaStreamStatus(SIPSorcery.Net.SDPMediaTypesEnum.audio, SIPSorcery.Net.MediaStreamStatusEnum.Inactive);
                 var dest = num + "@" + url;
               
                 var res = await transferSipAgent.Call(dest, user, pass, voipMediaSession);
@@ -238,6 +249,7 @@ namespace RespectPhone.SVOIP
                 else
                 {
                     sipAgent.TakeOffHold();
+                    sipAgent.MediaSession.SetMediaStreamStatus(SIPSorcery.Net.SDPMediaTypesEnum.audio, SIPSorcery.Net.MediaStreamStatusEnum.SendRecv);
                 }
             }
         }
@@ -252,14 +264,18 @@ namespace RespectPhone.SVOIP
             if (tres)
             {
                 transferSipAgent.Hangup();
+                sipAgent.Hangup();
                 CallStateCange?.Invoke(this, CallState.Completed);
                 isTransferAttended = false;
             }
 
         }
-        public void CancelTransfer()
+        public async void CancelTransfer()
         {
-            sipAgent.TakeOffHold(); try
+            sipAgent.MediaSession.SetMediaStreamStatus(SIPSorcery.Net.SDPMediaTypesEnum.audio, SIPSorcery.Net.MediaStreamStatusEnum.SendRecv);
+            await Task.Run(() => Thread.Sleep(1500));            
+            sipAgent.TakeOffHold();            
+            try
             {
                 transferSipAgent.Hangup();
             }
@@ -289,24 +305,26 @@ namespace RespectPhone.SVOIP
             regAgent.Start();
         }
 
-        public async void TransferCall(string num)
+        public void TransferCall(string num)
         {
             TransferAttended(num);
-            /*
+            
+        }
+        public async void BlindTransfer(string num)
+        {
             try
             {
-                var TRANSFER_DESTINATION_SIP_URI = "sip:" + num+"@"+url;
+                var TRANSFER_DESTINATION_SIP_URI = "sip:" + num + "@" + url;
                 var transferURI = SIPURI.ParseSIPURI(TRANSFER_DESTINATION_SIP_URI);
                 bool result = await sipAgent.BlindTransfer(transferURI, TimeSpan.FromSeconds(20), transfer_cancel);
                 if (result)
                     CallStateCange?.Invoke(this, CallState.Completed);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-            }*/
+            }
         }
-
         public void TurnOnOffMic(bool on)
         {
             micOn = on;

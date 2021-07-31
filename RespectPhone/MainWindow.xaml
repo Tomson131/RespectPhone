@@ -149,7 +149,17 @@
                         </Image.ToolTip>
                     </Image>
                 </Button>
-
+                <Button Name="CancelTransferBtn" Click="CancelTransferBtn_Click" Visibility="Collapsed" Cursor="Hand" BorderThickness="0" Background="Transparent">
+                    <Image Height="25" Source="pack://siteoforigin:,,,/Resources/cancel_transfer.png">
+                        <Image.ToolTip>
+                            <ToolTip>
+                                <Label>
+                                    Отменить перевод
+                                </Label>
+                            </ToolTip>
+                        </Image.ToolTip>
+                    </Image>
+                </Button>
                 <Button Name="AutoAnswerOn" Click="AutoAnswerOn_Click" Visibility="Collapsed" Cursor="Hand" BorderThickness="0" Background="Transparent">
                     <Image Height="25" Source="pack://siteoforigin:,,,/Resources/aa_on.png">
                         <Image.ToolTip>

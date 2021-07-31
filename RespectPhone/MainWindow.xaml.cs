@@ -365,14 +365,15 @@ namespace RespectPhone
         {
             if (Phone.isTransferAttended)
             {
-                Phone.CancelTransfer();
-                transferOn = false;
+           
             }
             else
             {
                 Num.Text = "";
                 CallBtn.Visibility = Visibility.Visible;
                 transferOn = true;
+                TransferBtn.Visibility = Visibility.Collapsed;
+                CancelTransferBtn.Visibility = Visibility.Visible;
             }
         }
 
@@ -449,6 +450,14 @@ namespace RespectPhone
                 });
                 th.Start();
             }
+        }
+
+        private void CancelTransferBtn_Click(object sender, RoutedEventArgs e)
+        {
+            TransferBtn.Visibility = Visibility.Visible;
+            CancelTransferBtn.Visibility = Visibility.Collapsed;
+            Phone.CancelTransfer();           
+            transferOn = false;
         }
     }
 }
