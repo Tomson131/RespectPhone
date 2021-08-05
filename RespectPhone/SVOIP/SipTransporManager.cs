@@ -13,7 +13,7 @@ namespace WPFTEST
     public class SipTransporManager
 
     {
-        private static int HOMER_SERVER_PORT = 5060;
+        private static int HOMER_SERVER_PORT = 5061;
         public SIPTransport SIPTransport = new SIPTransport();        
         public static SipTransporManager _ins { get; set; }
         public static SipTransporManager INS { get { if (_ins == null) _ins = new SipTransporManager(); return _ins; } }

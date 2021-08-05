@@ -459,5 +459,11 @@ namespace RespectPhone
             Phone.CancelTransfer();           
             transferOn = false;
         }
+
+        private void Border_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            RSettings rs = new RSettings();
+            rs.Show();
+        }
     }
 }

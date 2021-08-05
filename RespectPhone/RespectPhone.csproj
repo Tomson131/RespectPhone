@@ -173,6 +173,9 @@
     <Compile Include="Loader.xaml.cs">
       <DependentUpon>Loader.xaml</DependentUpon>
     </Compile>
+    <Compile Include="RSettings.xaml.cs">
+      <DependentUpon>RSettings.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SIPAccount.cs" />
     <Compile Include="SoftPhoneOldOzeki.cs" />
     <Compile Include="SVOIP\IRespPhone.cs" />
@@ -200,6 +203,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="RSettings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -291,6 +298,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\cancel_transfer.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\wf_ic_settings.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

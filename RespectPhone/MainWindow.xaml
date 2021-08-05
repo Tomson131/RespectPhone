@@ -9,13 +9,16 @@
         
     <Grid>
         
-        <Grid MouseDown="Grid_MouseDown" VerticalAlignment="Top" Height="20" Background="#FF303030">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+        <Grid MouseDown="Grid_MouseDown" VerticalAlignment="Top" Height="25" Background="#FF303030">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0">
+                <Border Width="20" Margin="0,0,5,0" Height="20" Background="Transparent" Cursor="Hand"  PreviewMouseDown="Border_PreviewMouseDown" CornerRadius="10">
+                    <Image Source="pack://siteoforigin:,,,/Resources/wf_ic_settings.png"></Image>
+                </Border>
                 <Border Width="20" Height="20" Background="Red" Cursor="Hand" MouseDown="Border_MouseDown" CornerRadius="10">
                     <Label Padding="0" HorizontalAlignment="Center">x</Label></Border>
             </StackPanel>
         </Grid>
-        <StackPanel Name="mMainGrid" Margin="0,10,0,0">
+        <StackPanel Name="mMainGrid" Margin="0,20,0,0">
             
             <Grid Margin="20">
                 <StackPanel Orientation="Horizontal" >
@@ -184,7 +187,7 @@
                 </Button>
             </StackPanel>
         </StackPanel>
-        <Grid Margin="0,20,0,0" Name="LoginGrid" Visibility="Collapsed" Background="Black">
+        <Grid Margin="0,25,0,0" Name="LoginGrid" Visibility="Collapsed" Background="Black">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                 <StackPanel Orientation="Horizontal">
                     <Label Foreground="#FFF">Логин</Label>
