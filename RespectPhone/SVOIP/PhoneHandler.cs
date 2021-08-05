@@ -17,7 +17,7 @@ namespace RespectPhone.SVOIP
     {
 
         public static string user = "4777";
-        public static string pass = "1q2w3e4r";
+        public static string pass = "1";
         public static string url = "aster.institutrb.ru:5160";
         public static SipTransporManager transport = SipTransporManager.INS;
         SIPRegistrationUserAgent regAgent;
@@ -28,6 +28,7 @@ namespace RespectPhone.SVOIP
         bool micOn = true;
         bool spOn = true;
         public bool isTransferAttended = false;
+        List<string> incomingCallID = new List<string>();
         VoIPMediaSession voipMediaSession { get { return CreateMediaSession(); } }
 
         public bool InCall { get { return sipAgent.IsCallActive || sipAgent.IsRinging; } }
@@ -142,8 +143,19 @@ namespace RespectPhone.SVOIP
         private void SIPLOG(object sender, SIPRequest e)
         {
 
-            if(e.Method==SIPMethodsEnum.BYE)
-                CallStateCange?.Invoke(this, CallState.Completed);
+            if (e.Method == SIPMethodsEnum.BYE)
+            {
+                CheckCallId(e);
+                CallStateCange?.Invoke(this, CallState.Completed);                
+            }
+            if (e.Method == SIPMethodsEnum.CANCEL)
+            {
+                CheckCallId(e);
+                CallStateCange?.Invoke(this, CallState.Cancelled);
+            }
+            
+
+
             if (e.Method == SIPMethodsEnum.OPTIONS) return;
             Console.WriteLine("=============================");
             Console.WriteLine(e.Method);
@@ -153,11 +165,17 @@ namespace RespectPhone.SVOIP
             Console.WriteLine("=============================");
         }
 
+        private void CheckCallId(SIPRequest e)
+        {
+            if (incomingCallID.Contains(e.Header.CallId))
+                incomingCallID.Remove(e.Header.CallId);
+        }
+
         private void IncoimingCallReceive(SIPUserAgent agent, SIPRequest req)
         {
             incoming_server = sipAgent.AcceptCall(req);
             IncomingCallReceived?.Invoke(sipAgent, req);
-
+            incomingCallID.Add(req.Header.CallId);
             // sipAgent.Answer(uas, voipMediaSession);
             //   await userAgent.Answer(uas, voipMediaSession2); - ansering
         }
@@ -360,6 +378,11 @@ namespace RespectPhone.SVOIP
         public void UnRegister()
         {
             regAgent.Stop();
+        }
+
+        public bool CheckActiveCallId(string s)
+        {
+            return incomingCallID.Contains(s);
         }
         #endregion
     }

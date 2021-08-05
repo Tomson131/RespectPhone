@@ -105,6 +105,7 @@ namespace WPFTEST
             //    _homerSIPClient.SendAsync(hepBuffer, hepBuffer.Length, HOMER_SERVER_ADDRESS, HOMER_SERVER_PORT);
             //}
             if (e.Method == SIPMethodsEnum.OPTIONS) return;
+            SipRequestReseived?.Invoke(this, e);
             Console.WriteLine("=============================REQIN");
             Console.WriteLine(e.Method);
             Console.WriteLine(e.Header.ToString());

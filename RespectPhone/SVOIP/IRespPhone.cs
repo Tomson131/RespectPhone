@@ -20,6 +20,7 @@ namespace WPFTEST
         void AnswerIncoming(bool reject = false);
         void ContinueTransfer();
 
+        bool CheckActiveCallId(string s);
         void CancelTransfer();
         
         event EventHandler<object> IncomingCallReceived;
