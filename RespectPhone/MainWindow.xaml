@@ -24,14 +24,14 @@
                 <StackPanel Orientation="Horizontal" >
                     <Border Name="ImgStat0" Width="20" Height="20" Background="Red" CornerRadius="10"></Border>
                     <Border Visibility="Collapsed" Name="ImgStat1" Width="20" Height="20" Background="Green" CornerRadius="10"></Border>
-                    <Label Foreground="#FFF" Name="StatLabel" Content="Отключен">
-                        <Label.ContextMenu>
+                    <TextBlock TextWrapping="WrapWithOverflow" Foreground="#FFF" Name="StatLabel" Text="Отключен">
+                        <TextBlock.ContextMenu>
                             <ContextMenu>
                                 <MenuItem Header="Подключиться" Click="MenuItem_Click"></MenuItem>
                                 <MenuItem Header="Отключиться" Click="MenuItem_Click_1"></MenuItem>
                             </ContextMenu>
-                        </Label.ContextMenu>
-                    </Label>
+                        </TextBlock.ContextMenu>
+                    </TextBlock>
                 </StackPanel>
             </Grid>
             <Grid>

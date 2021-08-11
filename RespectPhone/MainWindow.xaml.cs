@@ -245,14 +245,14 @@ namespace RespectPhone
                 {
                     ImgStat1.Visibility = Visibility.Visible;
                     ImgStat0.Visibility = Visibility.Collapsed;
-                    StatLabel.Content = "Подключен "+ RespSIPAccount.INS.displayName+"("+ RespSIPAccount.INS.authenticationId+ ")";
+                    StatLabel.Text = "Подключен "+ RespSIPAccount.INS.displayName+"("+ RespSIPAccount.INS.authenticationId+ ")";
                 }
                 else
                 {
 
                     ImgStat0.Visibility = Visibility.Visible;
                     ImgStat1.Visibility = Visibility.Collapsed;
-                    StatLabel.Content = "Отключен";
+                    StatLabel.Text = "Отключен";
                 }
             
             }));
