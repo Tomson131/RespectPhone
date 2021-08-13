@@ -388,6 +388,15 @@ namespace RespectPhone.SVOIP
         {
             return incomingCallID.Contains(s);
         }
+
+        public void SetDTMF(string act)
+        {
+            if (sipAgent.IsCallActive)
+            {
+                Byte.TryParse(act, out byte x);
+                sipAgent.SendDtmf(x);
+            }
+        }
         #endregion
     }
 }

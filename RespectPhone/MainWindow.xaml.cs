@@ -282,6 +282,7 @@ namespace RespectPhone
                 case "9":
                 case "0":
                     Num.Text += act;
+                    Phone.SetDTMF(act);
                     break;
                 case "call":
                     SetNumsInText();
