@@ -279,12 +279,13 @@ namespace RespectPhone.SVOIP
         public async void ContinueTransferAsync()
         {
             var tres = await transferSipAgent.AttendedTransfer(sipAgent.Dialogue, new TimeSpan(100000), transfer_cancel);
+            isTransferAttended = false;
             if (tres)
             {
                 transferSipAgent.Hangup();
                 sipAgent.Hangup();
                 CallStateCange?.Invoke(this, CallState.Completed);
-                isTransferAttended = false;
+                
             }
 
         }
@@ -296,6 +297,7 @@ namespace RespectPhone.SVOIP
             try
             {
                 transferSipAgent.Hangup();
+                transferSipAgent.Cancel();
             }
             catch { }
             isTransferAttended = false;
@@ -312,6 +314,8 @@ namespace RespectPhone.SVOIP
             try
             {
                 sipAgent.Hangup();
+                sipAgent.Cancel();
+               // sipAgent.
             }
             catch { }
         }

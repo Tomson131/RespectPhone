@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -28,6 +29,7 @@ namespace RespectPhone
             ats_host.Text = RespSIPAccount.INS.domainHost;
             e_log.Text = RespSIPAccount.INS.rlogin;
             e_pass.Text = RespSIPAccount.INS.rpass;
+            Vers.Content = Assembly.GetExecutingAssembly().GetName().Version.ToString();
         }
 
         private void UseExtConf_Checked(object sender, RoutedEventArgs e)

@@ -79,6 +79,7 @@
                             <TextBox Name="e_pass" TextChanged="e_pass_TextChanged"></TextBox>
                         </Grid>
                     </Grid>
+                    <Label Foreground="#FFF" Margin="10" Name="Vers"></Label>
                 </StackPanel>
                 
             </ScrollViewer>
