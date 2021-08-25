@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -66,6 +67,8 @@ namespace RespectPhone
 
         public bool AnswerMyExt { get; set; } = true;
         public bool UseConfExtension { get; set; } = true;
+        public string UpdateUrl { get; set; } = "http://respectrb.ru/versions.txt";
+
         public static void ReadConf()
         {
             try

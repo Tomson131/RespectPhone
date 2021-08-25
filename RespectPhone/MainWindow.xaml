@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RespectPhone"
         mc:Ignorable="d"
-        Title="MainWindow" Height="380" Width="400" Margin="0" Padding="0" ResizeMode="NoResize" Background="Transparent" StateChanged="Window_StateChanged" WindowStyle="None" GotFocus="Window_GotFocus" Unloaded="Window_Unloaded">
+        Title="MainWindow" Height="380" Width="400" Margin="0" Padding="0" ResizeMode="NoResize" Background="Transparent" Loaded="Window_Loaded" StateChanged="Window_StateChanged" WindowStyle="None" GotFocus="Window_GotFocus" Unloaded="Window_Unloaded">
         
     <Grid>
         

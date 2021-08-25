@@ -173,11 +173,23 @@ namespace RespectPhone.SVOIP
 
         private void IncoimingCallReceive(SIPUserAgent agent, SIPRequest req)
         {
-            incoming_server = sipAgent.AcceptCall(req);
-            IncomingCallReceived?.Invoke(sipAgent, req);
-            incomingCallID.Add(req.Header.CallId);
-            // sipAgent.Answer(uas, voipMediaSession);
-            //   await userAgent.Answer(uas, voipMediaSession2); - ansering
+            try
+            {
+                if (sipAgent.IsCallActive || sipAgent.IsCalling || sipAgent.IsRinging)
+                {
+
+                }
+                else
+                {
+                    incoming_server = sipAgent.AcceptCall(req);
+                    IncomingCallReceived?.Invoke(sipAgent, req);
+                    incomingCallID.Add(req.Header.CallId);
+
+                }
+                // sipAgent.Answer(uas, voipMediaSession);
+                //   await userAgent.Answer(uas, voipMediaSession2); - ansering
+            }
+            catch { }
         }
 
 
@@ -283,19 +295,21 @@ namespace RespectPhone.SVOIP
             if (tres)
             {
                 transferSipAgent.Hangup();
-                sipAgent.Hangup();
+                sipAgent.Hangup();                
                 CallStateCange?.Invoke(this, CallState.Completed);
                 
             }
 
         }
-        public async void CancelTransfer()
+        public void CancelTransfer()
         {
-            sipAgent.MediaSession.SetMediaStreamStatus(SIPSorcery.Net.SDPMediaTypesEnum.audio, SIPSorcery.Net.MediaStreamStatusEnum.SendRecv);
-            await Task.Run(() => Thread.Sleep(1500));            
-            sipAgent.TakeOffHold();            
+            if(sipAgent.MediaSession!=null)
+                sipAgent.MediaSession.SetMediaStreamStatus(SIPSorcery.Net.SDPMediaTypesEnum.audio, SIPSorcery.Net.MediaStreamStatusEnum.SendRecv);
+                      
+                     
             try
             {
+                sipAgent.TakeOffHold();
                 transferSipAgent.Hangup();
                 transferSipAgent.Cancel();
             }

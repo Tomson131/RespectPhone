@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using AutoUpdaterDotNET;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -78,6 +80,37 @@ namespace RespectPhone.Helpers
             if (j == null) return false;
             bool.TryParse(j.Value<string>(), out bool x);
             return x;
+        }
+
+        public static UpdateInfoEventArgs ReadVersionJson(string remoteData)
+        {
+            dynamic data = JsonConvert.DeserializeObject(remoteData);
+            var obj = data.versions.softphone;
+            var ui = new UpdateInfoEventArgs
+            {
+                CurrentVersion = obj.version,
+                DownloadURL = obj.update,
+                ChangelogURL = obj.changelog,
+                Mandatory = obj.mandatory,
+            };
+            return ui;
+        }
+
+        public static int ParseNewVers(string remoteData)
+        {
+            int vers = 0;
+            try
+            {
+                dynamic data = JsonConvert.DeserializeObject(remoteData);
+                var estvis = data.versions.softphone;
+                int.TryParse(estvis.current.ToString(), out int x);
+                vers = x;
+            }
+            catch
+            {
+
+            }
+            return vers;
         }
     }
 }

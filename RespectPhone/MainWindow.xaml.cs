@@ -1,9 +1,12 @@
-﻿using RespectPhone.Connections;
+﻿using AutoUpdaterDotNET;
+using RespectPhone.Connections;
+using RespectPhone.Helpers;
 using RespectPhone.SVOIP;
 using SIPSorcery.SIP;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -88,9 +91,27 @@ namespace RespectPhone
             nIcon.Visible = true;
             nIcon.Click += nIcon_Click;
             var cm = new System.Windows.Forms.ContextMenu();
-            cm.MenuItems.Add("Exit", ClickClose);
+            cm.MenuItems.Add("Update", ClickUpdate);
+            cm.MenuItems.Add("Exit", ClickClose);            
             nIcon.ContextMenu = cm;
 
+        }
+
+        private void ClickUpdate(object sender, EventArgs e)
+        {
+            try
+            {
+                if (AutoUpdater.DownloadUpdate())
+                {
+
+                    AutoUpdater_ApplicationExitEvent();
+                }
+            }
+            catch (Exception exception)
+            {
+                WMessageBox.Show(exception.Message, false, true);
+
+            }
         }
 
         private void ClickClose(object sender, EventArgs e)
@@ -305,6 +326,9 @@ namespace RespectPhone
                         CallBtn.Visibility = Visibility.Visible;
                         Phone.HangUp();
                     }
+
+                    TransferBtn.Visibility = Visibility.Visible;
+                    CancelTransferBtn.Visibility = Visibility.Collapsed;
                     break;                    
             }
         }
@@ -465,6 +489,110 @@ namespace RespectPhone
         {
             RSettings rs = new RSettings();
             rs.Show();
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                AutoUpdater.Start(RespSIPAccount.INS.UpdateUrl);
+                AutoUpdater.ReportErrors = false;
+                AutoUpdater.RunUpdateAsAdmin = false;
+                AutoUpdater.ApplicationExitEvent += AutoUpdater_ApplicationExitEvent;
+                AutoUpdater.CheckForUpdateEvent += AutoUpdater_CheckForUpdateEvent;
+                AutoUpdater.ParseUpdateInfoEvent += AutoUpdater_ParseUpdateInfoEvent;
+            }
+            catch(Exception ex)
+            {
+                WMessageBox.Show(ex.Message,false,false,true);
+            }
+        }
+
+        private void AutoUpdater_ParseUpdateInfoEvent(ParseUpdateInfoEventArgs args)
+        {
+            if (args == null) return;
+            try
+            {
+                var ui = JSONHelper.ReadVersionJson(args.RemoteData);
+                args.UpdateInfo = ui;
+
+                int x = JSONHelper.ParseNewVers(args.RemoteData);
+                var v = Assembly.GetExecutingAssembly().GetName().Version;
+                //Dispatcher.BeginInvoke((Action)(() =>
+                //{
+                //    // set labet for new vers available here
+                //    //NewVersLabel.Visibility = x > v.Revision ? Visibility.Visible : Visibility.Collapsed;
+                //}));
+
+
+            }
+            catch { }
+        }
+
+        private void AutoUpdater_CheckForUpdateEvent(UpdateInfoEventArgs args)
+        {
+            if (args == null) return;
+            
+            try
+            {
+                if (args.IsUpdateAvailable)
+                {
+                    DialogResult dialogResult;
+                    Dispatcher.BeginInvoke((Action)(() =>
+                    {
+                        dialogResult =
+                        WMessageBox.Show(
+                            $@"There is new version {args.CurrentVersion} available. You are using version {args.InstalledVersion}. Do you want to update the application now?",
+                            true, true, true);
+                        if (dialogResult.Equals(RespectPhone.DialogResult.OK))
+                        {
+                            try
+                            {
+                                if (AutoUpdater.DownloadUpdate())
+                                {
+
+                                    AutoUpdater_ApplicationExitEvent();
+                                }
+                            }
+                            catch (Exception exception)
+                            {
+                                WMessageBox.Show(exception.Message, false, true);
+                                this.Close();
+                            }
+                        }
+                    }));
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
+        private void AutoUpdater_ApplicationExitEvent()
+        {
+
+            try
+            {
+                nIcon.Icon = null;
+                nIcon = null;
+
+            }
+            catch
+            {
+
+            }
+            try
+            {
+                Environment.ExitCode = 0;
+                Environment.Exit(0);
+                //    Thread.Sleep(5000);
+            }
+            catch
+            {
+                this.Close();
+                //  Thread.Sleep(5000);
+            }
         }
     }
 }
