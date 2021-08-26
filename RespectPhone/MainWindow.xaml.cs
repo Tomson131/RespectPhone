@@ -136,7 +136,7 @@ namespace RespectPhone
             double m = Math.Round(z);
             var s = seconds - m * 60;
             Dispatcher.BeginInvoke((Action)(() => { 
-            Time.Content = (m > 9 ? m.ToString("F0") : "0" + m.ToString("F0")) + ":" + (s > 9 ? s.ToString() : "0" + s.ToString());
+                Time.Content = (m > 9 ? m.ToString("F0") : "0" + m.ToString("F0")) + ":" + (s > 9 ? s.ToString() : "0" + s.ToString());
             }));
         }
 

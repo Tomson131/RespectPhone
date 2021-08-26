@@ -24,7 +24,7 @@ namespace RespectPhone.SVOIP
         SIPUserAgent sipAgent;
         SIPUserAgent transferSipAgent;
         SSipAccount sacc;
-        SIPServerUserAgent incoming_server;
+        SIPServerUserAgent incoming_server;        
         bool micOn = true;
         bool spOn = true;
         public bool isTransferAttended = false;

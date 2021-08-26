@@ -4,6 +4,7 @@ cd bin
 cd Release
 
 "C:\Program Files (x86)\WinRAR\WinRAR.exe" a -r -x*\app.publish -afzip rep_update.zip ^
+ RespectPhone.exe^
  AutoUpdater.NET.dll^
  AutoUpdater.NET.pdb^
  AutoUpdater.NET^
@@ -24,8 +25,7 @@ cd Release
  NAudio.WinMM.dll^
  NAudio.xml^
  Newtonsoft.Json.dll^
- Newtonsoft.Json.xml^ 
- RespectPhone.exe^
+ Newtonsoft.Json.xml^
  RespectPhone.exe.config^
  RespectPhone.pdb^
  SIPSorcery.dll^
@@ -40,7 +40,7 @@ cd Release
  WpfAnimatedGif.dll^
  WpfAnimatedGif.pdb^
  WpfAnimatedGif.xml^
- ../../Resources^
+ Resources^
  
  
 move rep_update.zip ../../../install
