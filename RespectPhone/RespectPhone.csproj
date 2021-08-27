@@ -166,6 +166,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CallList.xaml.cs">
+      <DependentUpon>CallList.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Connections\MultiPostSend.cs" />
     <Compile Include="Connections\WebRequest.cs" />
     <Compile Include="EnumsData.cs" />
@@ -177,6 +180,10 @@
     <Compile Include="Loader.xaml.cs">
       <DependentUpon>Loader.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MiniItems\CallItemRow.xaml.cs">
+      <DependentUpon>CallItemRow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="RLog.cs" />
     <Compile Include="RSettings.xaml.cs">
       <DependentUpon>RSettings.xaml</DependentUpon>
     </Compile>
@@ -190,6 +197,10 @@
     <Compile Include="WMessageBox.xaml.cs">
       <DependentUpon>WMessageBox.xaml</DependentUpon>
     </Compile>
+    <Page Include="CallList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="IncomingCall.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -210,6 +221,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="MiniItems\CallItemRow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="RSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -314,6 +329,24 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\wf_ic_settings.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tube_sound.mp3" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tube_sound.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\beep1.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\list.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

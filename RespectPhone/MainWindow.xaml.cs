@@ -35,6 +35,9 @@ namespace RespectPhone
         System.Timers.Timer timer = new System.Timers.Timer();
         bool auto_answer = false;
         System.Windows.Forms.NotifyIcon nIcon = new System.Windows.Forms.NotifyIcon();
+        private MediaPlayer snd;
+        CallItem call_item = null;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -142,6 +145,7 @@ namespace RespectPhone
 
         private void StartTimer()
         {
+            
             seconds = 0;
             timer.Start();
         }
@@ -162,6 +166,7 @@ namespace RespectPhone
             {
                 case Events.AnswerIncoming:
                     Phone.AnswerIncoming();
+                    call_item.state = CallItemState.ANSWERED;
                     break;
                 case Events.RejectIncoming:
                     Phone.AnswerIncoming(true);
@@ -174,15 +179,20 @@ namespace RespectPhone
 
         private void CallStateChanged(object data)
         {
+            
             if (data is CallState)
             {
+                Console.WriteLine("MAINCALLSTATE: "+data.ToString());
                 var st = (CallState)data;
                 switch (st)
                 {
                     case CallState.Cancelled:
                     case CallState.Busy:
                     case CallState.Completed:
+                        StopRing();
                         StopTimer();
+                        if (st == CallState.Completed)
+                            PlayBeep();
                         Dispatcher.BeginInvoke((Action)(() =>
                         {
                             CallBtn.Visibility = Visibility.Visible;
@@ -190,8 +200,7 @@ namespace RespectPhone
                         break;
                     case CallState.InCall:
                         if(Phone.InCall)
-                            StartTimer();
-
+                            StartTimer();                        
                         break;
                     case CallState.Ringing:
                         Dispatcher.BeginInvoke((Action)(() =>
@@ -199,6 +208,10 @@ namespace RespectPhone
                             Time.Content = "Calling...";
                         }));
                        
+                        break;
+                    case CallState.Answered:
+                        StopRing();
+                        call_item.state = CallItemState.ANSWERED;
                         break;
                 }
             }
@@ -226,6 +239,7 @@ namespace RespectPhone
             Dispatcher.BeginInvoke((Action)(() => {
                 if (this.WindowState == WindowState.Minimized)
                     this.WindowState = WindowState.Normal;
+                call_item = RLog.AddCallItem(c.Header.From.FromName, false,false);
                 if (auto_answer) {
                     Phone.AnswerIncoming();
                 }
@@ -310,11 +324,16 @@ namespace RespectPhone
                     if (transferOn)
                         Phone.TransferCall(Num.Text);
                     else
+                    {
                         Phone.Call(Num.Text);
+                        call_item = RLog.AddCallItem(Num.Text,false);
+                    }
                     transferOn = false;
                     CallBtn.Visibility = Visibility.Collapsed;
+                    PlayRing();
                     break;
                 case "x":
+                    StopRing();
                     if (Phone.isTransferAttended)
                     {
                         Phone.ContinueTransfer();
@@ -325,8 +344,9 @@ namespace RespectPhone
                         StopTimer();
                         CallBtn.Visibility = Visibility.Visible;
                         Phone.HangUp();
+                        PlayBeep();
                     }
-
+                  
                     TransferBtn.Visibility = Visibility.Visible;
                     CancelTransferBtn.Visibility = Visibility.Collapsed;
                     break;                    
@@ -373,7 +393,7 @@ namespace RespectPhone
 
         private void SpOn_Click(object sender, RoutedEventArgs e)
         {
-
+            StopRing();
             SpOn.Visibility = Visibility.Collapsed;
             SpOff.Visibility = Visibility.Visible;
             Phone.TurnOnOffSpeaker(false);
@@ -483,6 +503,7 @@ namespace RespectPhone
             CancelTransferBtn.Visibility = Visibility.Collapsed;
             Phone.CancelTransfer();           
             transferOn = false;
+            StopRing();
         }
 
         private void Border_PreviewMouseDown(object sender, MouseButtonEventArgs e)
@@ -593,6 +614,87 @@ namespace RespectPhone
                 this.Close();
                 //  Thread.Sleep(5000);
             }
+        }
+
+
+        #region Sound calling
+
+        public void PlayRing()
+        {
+            try
+            {
+                
+                snd = new MediaPlayer();
+                snd.Open(new Uri(System.Environment.CurrentDirectory + "\\resources\\tube_sound.wav", UriKind.Relative));
+                snd.Volume = 0.2;
+                snd.MediaEnded += RepeatRing;
+                snd.Play();
+            }
+            catch (Exception ex)
+            {
+                RLog.SaveExError(ex,"START CALL SOUND");
+
+            }
+        }
+        public void PlayBeep()
+        {
+            try
+            {
+                Dispatcher.BeginInvoke((Action)(() =>
+                {
+                    snd = new MediaPlayer();
+                    snd.Open(new Uri(System.Environment.CurrentDirectory + "\\resources\\beep1.wav", UriKind.Relative));
+                    snd.Volume = 0.8;
+                    snd.Play();
+                }));
+            }
+            catch (Exception ex)
+            {
+                RLog.SaveExError(ex, "START BEEP SOUND");
+
+            }
+        }
+        private void RepeatRing(object sender, EventArgs e)
+        {
+
+            try
+            {
+                
+                snd.Position = TimeSpan.Zero;
+                snd.Play();
+            }
+            catch (Exception ex)
+            {
+                RLog.SaveExError(ex,"REPEAT CALL SOUND");
+
+            }
+        }
+
+        public void StopRing()
+        {
+            try
+            {
+                Dispatcher.BeginInvoke((Action)(() => { 
+                    if (snd == null) return;
+
+                    snd.Stop();
+                    snd.MediaEnded -= RepeatRing;
+                    snd = null;
+                }));
+            }
+            catch(Exception ex)
+            {
+                RLog.SaveExError(ex,"STOP CALL SOUND");
+            }
+        }
+
+
+        #endregion
+
+        private void Border_PreviewMouseDown_1(object sender, MouseButtonEventArgs e)
+        {
+            CallList cl = new CallList();
+            cl.Show();
         }
     }
 }

@@ -11,6 +11,9 @@
         
         <Grid MouseDown="Grid_MouseDown" VerticalAlignment="Top" Height="25" Background="#FF303030">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,5,0">
+                <Border Width="20" Margin="0,0,5,0" Height="20" Background="Transparent" Cursor="Hand"  PreviewMouseDown="Border_PreviewMouseDown_1" CornerRadius="10">
+                <Image Height="15" Source="pack://siteoforigin:,,,/Resources/list.png"></Image>
+                </Border>
                 <Border Width="20" Margin="0,0,5,0" Height="20" Background="Transparent" Cursor="Hand"  PreviewMouseDown="Border_PreviewMouseDown" CornerRadius="10">
                     <Image Source="pack://siteoforigin:,,,/Resources/wf_ic_settings.png"></Image>
                 </Border>

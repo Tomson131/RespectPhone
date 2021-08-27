@@ -61,7 +61,7 @@ namespace RespectPhone.SVOIP
 
             transferSipAgent = new SIPUserAgent(transport.SIPTransport, null, true, sacc);
             transferSipAgent.OnIncomingCall += TranferTransportIncomingCall;
-
+            transferSipAgent.ClientCallAnswered += SipAgent_ClientCallAnswered;
 
             sipAgent = new SIPUserAgent(transport.SIPTransport, null, true, sacc);
             sipAgent.OnIncomingCall += IncoimingCallReceive;
@@ -84,6 +84,7 @@ namespace RespectPhone.SVOIP
 
         private void SIPRESPLOG(object sender, SIPResponse e)
         {
+            Console.WriteLine("CALLSTATE:" + e.Status);
             switch (e.Status)
             {
                 case SIPResponseStatusCodesEnum.SessionProgress:
@@ -94,6 +95,7 @@ namespace RespectPhone.SVOIP
                     CallStateCange?.Invoke(this, CallState.InCall);
                     break;
                 
+
             }
         }
 
@@ -157,12 +159,12 @@ namespace RespectPhone.SVOIP
 
 
             if (e.Method == SIPMethodsEnum.OPTIONS) return;
-            Console.WriteLine("=============================");
-            Console.WriteLine(e.Method);
-            Console.WriteLine(e.Header.ToString());
-            Console.WriteLine("-----------------------------");
-            Console.WriteLine(e.Body != null? e.Body.ToString():"EMPTY");
-            Console.WriteLine("=============================");
+            //Console.WriteLine("=============================");
+            //Console.WriteLine(e.Method);
+            //Console.WriteLine(e.Header.ToString());
+            //Console.WriteLine("-----------------------------");
+            //Console.WriteLine(e.Body != null? e.Body.ToString():"EMPTY");
+            //Console.WriteLine("=============================");
         }
 
         private void CheckCallId(SIPRequest e)
@@ -407,8 +409,10 @@ namespace RespectPhone.SVOIP
         {
             if (sipAgent.IsCallActive)
             {
-                Byte.TryParse(act, out byte x);
-                sipAgent.SendDtmf(x);
+                int.TryParse(act, out int xt);
+
+              //  Byte.TryParse(xt, out byte x);
+                sipAgent.SendDtmf(0x01);
             }
         }
         #endregion

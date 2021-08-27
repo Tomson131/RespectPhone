@@ -43,14 +43,14 @@ namespace WPFTEST
         {
 
             SipResponseReseivedz?.Invoke(this, e);
-            Console.WriteLine("============================= RESPONSE RECEIVED =========================================");
-            Console.WriteLine("STATUS: " + e.Status);
-            Console.WriteLine("FROMNAME: " + e.Header.From.FromName);
-            Console.WriteLine("REASON: " + e.ReasonPhrase);
-            Console.WriteLine(e.Header.ToString());
-            Console.WriteLine("-----------------------------");
-            Console.WriteLine(e.Body != null ? e.Body.ToString() : "EMPTY");
-            Console.WriteLine("============================= RESPONSE END ==============================================");
+            //Console.WriteLine("============================= RESPONSE RECEIVED =========================================");
+            //Console.WriteLine("STATUS: " + e.Status);
+            //Console.WriteLine("FROMNAME: " + e.Header.From.FromName);
+            //Console.WriteLine("REASON: " + e.ReasonPhrase);
+            //Console.WriteLine(e.Header.ToString());
+            //Console.WriteLine("-----------------------------");
+            //Console.WriteLine(e.Body != null ? e.Body.ToString() : "EMPTY");
+            //Console.WriteLine("============================= RESPONSE END ==============================================");
             return Task.FromResult(0);
         }
 
@@ -106,12 +106,12 @@ namespace WPFTEST
             //}
             if (e.Method == SIPMethodsEnum.OPTIONS) return;
             SipRequestReseived?.Invoke(this, e);
-            Console.WriteLine("=============================REQIN");
-            Console.WriteLine(e.Method);
-            Console.WriteLine(e.Header.ToString());
-            Console.WriteLine("-----------------------------");
-            Console.WriteLine(e.Body != null ? e.Body.ToString() : "EMPTY");
-            Console.WriteLine("=============================");
+            //Console.WriteLine("=============================REQIN");
+            //Console.WriteLine(e.Method);
+            //Console.WriteLine(e.Header.ToString());
+            //Console.WriteLine("-----------------------------");
+            //Console.WriteLine(e.Body != null ? e.Body.ToString() : "EMPTY");
+            //Console.WriteLine("=============================");
         }
 
         private void SIPRequestOutTraceEvent(SIPEndPoint localEP, SIPEndPoint remoteEP, SIPRequest e)
@@ -123,12 +123,12 @@ namespace WPFTEST
             //    var hepBuffer = HepPacket.GetBytes(localEP, remoteEP, DateTime.Now, 333, "myHep", sipRequest.ToString());
             //    _homerSIPClient.SendAsync(hepBuffer, hepBuffer.Length, HOMER_SERVER_ADDRESS, HOMER_SERVER_PORT);
             //}
-            Console.WriteLine("============================= REQOUT");
-            Console.WriteLine(e.Method);
-            Console.WriteLine(e.Header.ToString());
-            Console.WriteLine("-----------------------------");
-            Console.WriteLine(e.Body != null ? e.Body.ToString() : "EMPTY");
-            Console.WriteLine("=============================");
+            //Console.WriteLine("============================= REQOUT");
+            //Console.WriteLine(e.Method);
+            //Console.WriteLine(e.Header.ToString());
+            //Console.WriteLine("-----------------------------");
+            //Console.WriteLine(e.Body != null ? e.Body.ToString() : "EMPTY");
+            //Console.WriteLine("=============================");
         }
 
         private void SIPResponseInTraceEvent(SIPEndPoint localEP, SIPEndPoint remoteEP, SIPResponse e)
@@ -141,14 +141,14 @@ namespace WPFTEST
             //    _homerSIPClient.SendAsync(hepBuffer, hepBuffer.Length, HOMER_SERVER_ADDRESS, HOMER_SERVER_PORT);
             //}
             SipResponseReseivedz?.Invoke(this, e);
-            Console.WriteLine("============================= RESPONSE RECEIVED =========================================");
-            Console.WriteLine("STATUS: " + e.Status);
-            Console.WriteLine("FROMNAME: " + e.Header.From.FromName);
-            Console.WriteLine("REASON: " + e.ReasonPhrase);
-            Console.WriteLine(e.Header.ToString());
-            Console.WriteLine("-----------------------------");
-            Console.WriteLine(e.Body != null ? e.Body.ToString() : "EMPTY");
-            Console.WriteLine("=============================");
+            //Console.WriteLine("============================= RESPONSE RECEIVED =========================================");
+            //Console.WriteLine("STATUS: " + e.Status);
+            //Console.WriteLine("FROMNAME: " + e.Header.From.FromName);
+            //Console.WriteLine("REASON: " + e.ReasonPhrase);
+            //Console.WriteLine(e.Header.ToString());
+            //Console.WriteLine("-----------------------------");
+            //Console.WriteLine(e.Body != null ? e.Body.ToString() : "EMPTY");
+            //Console.WriteLine("=============================");
         }
 
         private void SIPResponseOutTraceEvent(SIPEndPoint localEP, SIPEndPoint remoteEP, SIPResponse e)
@@ -162,14 +162,14 @@ namespace WPFTEST
             //}
             SipResponseReseivedz?.Invoke(this, e);
             if (e.ReasonPhrase == "MethodNotAllowed") return;
-            Console.WriteLine("============================= RESPONSE RECEIVED =========================================");
-            Console.WriteLine("STATUS: " + e.Status);
-            Console.WriteLine("FROMNAME: " + e.Header.From.FromName);
-            Console.WriteLine("REASON: " + e.ReasonPhrase);
-            Console.WriteLine(e.Header.ToString());
-            Console.WriteLine("-----------------------------");
-            Console.WriteLine(e.Body != null ? e.Body.ToString() : "EMPTY");
-            Console.WriteLine("=============================");
+            //Console.WriteLine("============================= RESPONSE RECEIVED =========================================");
+            //Console.WriteLine("STATUS: " + e.Status);
+            //Console.WriteLine("FROMNAME: " + e.Header.From.FromName);
+            //Console.WriteLine("REASON: " + e.ReasonPhrase);
+            //Console.WriteLine(e.Header.ToString());
+            //Console.WriteLine("-----------------------------");
+            //Console.WriteLine(e.Body != null ? e.Body.ToString() : "EMPTY");
+            //Console.WriteLine("=============================");
         }
 
     }
