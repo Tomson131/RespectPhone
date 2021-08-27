@@ -121,13 +121,14 @@ namespace RespectPhone.SVOIP
 
         private VoIPMediaSession CreateMediaSession()
         {
-            var windowsAudioEndPoint = new WindowsAudioEndPoint(new AudioEncoder());
-         //   var windowsVideoEndPoint = new WindowsVideoEndPoint(new SIPSorceryMedia.Encoders.VpxVideoEncoder());
+            var windowsAudioEndPointRec = new WindowsAudioEndPoint(new AudioEncoder());
+           // var windowsAudioEndPointSend = new WindowsAudioEndPoint(new AudioEncoder());
+            //   var windowsVideoEndPoint = new WindowsVideoEndPoint(new SIPSorceryMedia.Encoders.VpxVideoEncoder());
 
             MediaEndPoints mediaEndPoints = new MediaEndPoints
             {
-                AudioSink = windowsAudioEndPoint,
-                AudioSource = windowsAudioEndPoint,
+                AudioSink = windowsAudioEndPointRec,
+                AudioSource = windowsAudioEndPointRec,
                 //VideoSink = windowsVideoEndPoint,
                 //VideoSource = windowsVideoEndPoint,
             };
@@ -135,9 +136,8 @@ namespace RespectPhone.SVOIP
             // Fallback video source if a Windows webcam cannot be accessed.
 //            var testPatternSource = new VideoTestPatternSource();
 
-            var voipMediaSession = new VoIPMediaSession(mediaEndPoints);
-            voipMediaSession.AcceptRtpFromAny = true;
-
+            var voipMediaSession = new VoIPMediaSession(mediaEndPoints);            
+            voipMediaSession.AcceptRtpFromAny = true;            
             return voipMediaSession;
         }
 
