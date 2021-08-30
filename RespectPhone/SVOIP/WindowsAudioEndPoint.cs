@@ -34,20 +34,20 @@ namespace SIPSorceryMedia.Windows
         private const int DEVICE_BITS_PER_SAMPLE = 16;
         private const int DEVICE_CHANNELS = 1;
         private const int INPUT_BUFFERS = 2;          // See https://github.com/sipsorcery/sipsorcery/pull/148.
-        private const int AUDIO_SAMPLE_PERIOD_MILLISECONDS = 60;
+        private const int AUDIO_SAMPLE_PERIOD_MILLISECONDS = 40;
         private const int AUDIO_INPUTDEVICE_INDEX = -1;
         private const int AUDIO_OUTPUTDEVICE_INDEX = -1;
         private const int CLEAR_OUTBUFFER_IN = 500;
         /// <summary>
         /// Microphone input is sampled at 8KHz.
         /// </summary>
-        //public readonly static AudioSamplingRatesEnum DefaultAudioSourceSamplingRate = 44000;// AudioSamplingRatesEnum.Rate8KHz;
+        public readonly static AudioSamplingRatesEnum DefaultAudioSourceSamplingRate = AudioSamplingRatesEnum.Rate8KHz;
 
-        //public readonly static AudioSamplingRatesEnum DefaultAudioPlaybackRate = 44000;//AudioSamplingRatesEnum.Rate8KHz;
+        public readonly static AudioSamplingRatesEnum DefaultAudioPlaybackRate = AudioSamplingRatesEnum.Rate8KHz;
 
-        public readonly static int DefaultAudioSourceSamplingRate = 8000;// AudioSamplingRatesEnum.Rate8KHz;
+        //public readonly static int DefaultAudioSourceSamplingRate = 8000;// AudioSamplingRatesEnum.Rate8KHz;
 
-        public readonly static int DefaultAudioPlaybackRate = 8000;//AudioSamplingRatesEnum.Rate8KHz;
+        //public readonly static int DefaultAudioPlaybackRate = 8000;//AudioSamplingRatesEnum.Rate8KHz;
 
         private ILogger logger = SIPSorcery.LogFactory.CreateLogger<WindowsAudioEndPoint>();
 
@@ -294,33 +294,17 @@ namespace SIPSorceryMedia.Windows
             // WaveBuffer wavBuffer = new WaveBuffer(args.Buffer.Take(args.BytesRecorded).ToArray());
             // byte[] encodedSample = _audioEncoder.EncodeAudio(wavBuffer.ShortBuffer, _audioFormatManager.SelectedFormat);
 
-            //byte[] buffer = args.Buffer.Take(args.BytesRecorded).ToArray();
-            short[] pcm = new short[args.Buffer.Length];
-            for (int ix = 0; ix < args.Buffer.Length; ix++)
-            {
-                pcm[ix] = args.Buffer[ix];
-            }
-
-
-            //  short[] pcm = buffer.Where((x, i) => i % 2 == 0).Select((y, i) => BitConverter.ToInt16(buffer, i * 2)).ToArray();
+            byte[] buffer = args.Buffer.Take(args.BytesRecorded).ToArray();         
+            short[] pcm = buffer.Where((x, i) => i % 2 == 0).Select((y, i) => BitConverter.ToInt16(buffer, i * 2)).ToArray();
             byte[] encodedSample = _audioEncoder.EncodeAudio(pcm, _audioFormatManager.SelectedFormat);
-            bufferSample = encodedSample;
-            PlayAudioSample();
+            OnAudioSourceEncodedSample?.BeginInvoke((uint)bufferSample.Length, bufferSample, CallBackInvoke, null);
 
         }
         byte[] bufferSample;
 
         public IAsyncResult EndInvokeRes { get; private set; }
 
-        private void PlayAudioSample()
-        {
-            var rl = OnAudioSourceEncodedSample?.GetInvocationList();
-            Task.Run(() => { 
-                OnAudioSourceEncodedSample?.BeginInvoke((uint)bufferSample.Length, bufferSample, CallBackInvoke, null);
-            });
-
-            // OnAudioSourceEncodedSample?.Invoke((uint)bufferSample.Length, bufferSample);
-        }
+      
 
         private void CallBackInvoke(IAsyncResult ar)
         {

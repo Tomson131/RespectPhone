@@ -12,6 +12,7 @@
             <ColumnDefinition Width="*"></ColumnDefinition>
             <ColumnDefinition Width="0.5*"></ColumnDefinition>
             <ColumnDefinition Width="0.5*"></ColumnDefinition>
+            <ColumnDefinition Width="0.5*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0">
             <Label Name="Date" Foreground="#FFF">
@@ -32,6 +33,13 @@
             <Label Name="State" Foreground="#FFF">
                 asd
             </Label>
+        </Grid>
+        <Grid Grid.Column="4">
+            <StackPanel Orientation="Horizontal">
+                <Button Background="Transparent" Cursor="Hand" BorderThickness="0" Click="Button_Click">
+                    <Image Height="20" Source="pack://siteoforigin:,,,/Resources/phone_up.png"></Image>                                        
+                </Button>
+            </StackPanel>
         </Grid>
     </Grid>
 </UserControl>

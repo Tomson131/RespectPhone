@@ -174,7 +174,20 @@ namespace RespectPhone
                 case Events.CallStateChanged:
                     CallStateChanged(data);
                     break;
+                case Events.OrginateCall:
+                    Originatecall((string)data);
+                    break;
             }
+        }
+
+        private void Originatecall(string data)
+        {
+            if (CallBtn.Visibility == Visibility.Visible)
+            {
+                Num.Text = data;
+                Num_Button_Click(CallBtn, null);
+            }
+
         }
 
         private void CallStateChanged(object data)

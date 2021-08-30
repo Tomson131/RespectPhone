@@ -33,6 +33,7 @@ namespace RespectPhone
     {
         AnswerIncoming,
         RejectIncoming,
-        CallStateChanged
+        CallStateChanged,
+        OrginateCall
     }
 }

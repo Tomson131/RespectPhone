@@ -28,5 +28,10 @@ namespace RespectPhone.MiniItems
             Inb.Content = it.target == CallItemTarget.INBOUND ? "Вх" : "Исх";
             State.Content = it.state== CallItemState.ANSWERED ? "Отв" : "НЕОТВ";
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            GlobalEvent.Event(this, Events.OrginateCall, Num.Text);
+        }
     }
 }
