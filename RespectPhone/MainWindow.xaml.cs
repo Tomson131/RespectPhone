@@ -310,7 +310,10 @@ namespace RespectPhone
         {
             var st = Num.Text != null ? Num.Text : "";
             int[] intMatch = st.Where(Char.IsDigit).Select(x => int.Parse(x.ToString())).ToArray();
-            Num.Text =string.Join("", intMatch);
+            var str = string.Join("", intMatch);
+            if (str.Length == 11)              
+                    str = "8"+str.Substring(1, str.Length - 1);
+            Num.Text = str;
         }
         private void Num_Button_Click(object sender, RoutedEventArgs e)
         {

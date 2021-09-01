@@ -121,24 +121,32 @@ namespace RespectPhone.SVOIP
 
         private VoIPMediaSession CreateMediaSession()
         {
-            var windowsAudioEndPointRec = new WindowsAudioEndPoint(new AudioEncoder());
-           // var windowsAudioEndPointSend = new WindowsAudioEndPoint(new AudioEncoder());
-            //   var windowsVideoEndPoint = new WindowsVideoEndPoint(new SIPSorceryMedia.Encoders.VpxVideoEncoder());
-
-            MediaEndPoints mediaEndPoints = new MediaEndPoints
+            try
             {
-                AudioSink = windowsAudioEndPointRec,
-                AudioSource = windowsAudioEndPointRec,
-                //VideoSink = windowsVideoEndPoint,
-                //VideoSource = windowsVideoEndPoint,
-            };
+                var windowsAudioEndPointRec = new WindowsAudioEndPoint(new AudioEncoder());
+                // var windowsAudioEndPointSend = new WindowsAudioEndPoint(new AudioEncoder());
+                //   var windowsVideoEndPoint = new WindowsVideoEndPoint(new SIPSorceryMedia.Encoders.VpxVideoEncoder());
 
-            // Fallback video source if a Windows webcam cannot be accessed.
-//            var testPatternSource = new VideoTestPatternSource();
+                MediaEndPoints mediaEndPoints = new MediaEndPoints
+                {
+                    AudioSink = windowsAudioEndPointRec,
+                    AudioSource = windowsAudioEndPointRec,
+                    //VideoSink = windowsVideoEndPoint,
+                    //VideoSource = windowsVideoEndPoint,
+                };
 
-            var voipMediaSession = new VoIPMediaSession(mediaEndPoints);            
-            voipMediaSession.AcceptRtpFromAny = true;            
-            return voipMediaSession;
+                // Fallback video source if a Windows webcam cannot be accessed.
+                //            var testPatternSource = new VideoTestPatternSource();
+
+                var voipMediaSession = new VoIPMediaSession(mediaEndPoints);
+                voipMediaSession.AcceptRtpFromAny = true;
+                return voipMediaSession;
+            }
+            catch (Exception ex)
+            {
+                WMessageBox.Show(ex.Message, false, false);
+                return new VoIPMediaSession(new MediaEndPoints());
+            }
         }
 
 
