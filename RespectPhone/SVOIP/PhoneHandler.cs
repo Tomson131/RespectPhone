@@ -418,9 +418,42 @@ namespace RespectPhone.SVOIP
             if (sipAgent.IsCallActive)
             {
                 int.TryParse(act, out int xt);
+                switch (xt)
+                {
+                    case 0:
+                        sipAgent.SendDtmf(0x00);
+                        break;
+                    case 1:
+                        sipAgent.SendDtmf(0x01);
+                        break;
+                    case 2:
+                        sipAgent.SendDtmf(0x02);
+                        break;
+                    case 3:
+                        sipAgent.SendDtmf(0x03);
+                        break;
+                    case 4:
+                        sipAgent.SendDtmf(0x04);
+                        break;
+                    case 5:
+                        sipAgent.SendDtmf(0x05);
+                        break;
+                    case 6:
+                        sipAgent.SendDtmf(0x06);
+                        break;
+                    case 7:
+                        sipAgent.SendDtmf(0x07);
+                        break;
+                    case 8:
+                        sipAgent.SendDtmf(0x08);
+                        break;
+                    case 9:
+                        sipAgent.SendDtmf(0x09);
+                        break;
 
+                }
               //  Byte.TryParse(xt, out byte x);
-                sipAgent.SendDtmf(0x01);
+                
             }
         }
         #endregion

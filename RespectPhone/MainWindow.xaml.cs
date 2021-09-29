@@ -313,6 +313,9 @@ namespace RespectPhone
             var str = string.Join("", intMatch);
             if (str.Length == 11)              
                     str = "8"+str.Substring(1, str.Length - 1);
+            if (str.Length == 10)
+                if (str[0] != '8')
+                    str = "8" + str;
             Num.Text = str;
         }
         private void Num_Button_Click(object sender, RoutedEventArgs e)
