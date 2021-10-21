@@ -119,8 +119,13 @@ namespace RespectPhone
 
         private void ClickClose(object sender, EventArgs e)
         {
-            RespSIPAccount.INS.SaveToFile();
-            Phone.UnRegister();
+            try
+            {
+                RespSIPAccount.INS.SaveToFile();
+                if(Phone!=null)
+                    Phone.UnRegister();
+            }
+            catch { }
             this.Close();
         }
 
