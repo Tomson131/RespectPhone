@@ -664,6 +664,7 @@ namespace RespectPhone
         {
             try
             {
+                Phone.ClearMediaSession();
                 Dispatcher.BeginInvoke((Action)(() =>
                 {
                     snd = new MediaPlayer();

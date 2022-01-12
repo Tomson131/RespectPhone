@@ -29,5 +29,6 @@ namespace WPFTEST
         event EventHandler<object> CallStateCange;
 
         void SetDTMF(string act);
+        void ClearMediaSession();
     }
 }

@@ -57,7 +57,7 @@ namespace RespectPhone
             }
             catch (Exception e)
             {
-
+                Console.WriteLine(e.Message);
                 
             }
         }
@@ -70,8 +70,9 @@ namespace RespectPhone
                 snd.Stop();                
                 snd = null;
             }
-            catch 
+            catch (Exception e)
             {
+                Console.WriteLine(e.Message);
 
             }
         }

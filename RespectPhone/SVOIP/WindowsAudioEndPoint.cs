@@ -20,8 +20,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NAudio.Wave;
@@ -33,11 +35,11 @@ namespace SIPSorceryMedia.Windows
     {
         private const int DEVICE_BITS_PER_SAMPLE = 16;
         private const int DEVICE_CHANNELS = 1;
-        private const int INPUT_BUFFERS = 2;          // See https://github.com/sipsorcery/sipsorcery/pull/148.
-        private const int AUDIO_SAMPLE_PERIOD_MILLISECONDS = 40;
+        private const int INPUT_BUFFERS = 3;          // See https://github.com/sipsorcery/sipsorcery/pull/148.
+        private const int AUDIO_SAMPLE_PERIOD_MILLISECONDS = 20;
         private const int AUDIO_INPUTDEVICE_INDEX = -1;
         private const int AUDIO_OUTPUTDEVICE_INDEX = -1;
-        private const int CLEAR_OUTBUFFER_IN = 500;
+        private const int CLEAR_OUTBUFFER_IN = 300;
         /// <summary>
         /// Microphone input is sampled at 8KHz.
         /// </summary>
@@ -57,6 +59,12 @@ namespace SIPSorceryMedia.Windows
             (int)DefaultAudioSourceSamplingRate,
             DEVICE_BITS_PER_SAMPLE,
             DEVICE_CHANNELS);
+
+        //= WaveFormat.CreateCustomFormat(WaveFormatEncoding.ALaw,8000, 1,8000,1,8);
+        //private WaveFormat _waveSourceFormat = new WaveFormat(
+        //    (int)DefaultAudioSourceSamplingRate,
+        //    DEVICE_BITS_PER_SAMPLE,
+        //    DEVICE_CHANNELS);
 
         /// <summary>
         /// Audio render device.
@@ -142,7 +150,8 @@ namespace SIPSorceryMedia.Windows
                         _waveInEvent.NumberOfBuffers = INPUT_BUFFERS;
                         _waveInEvent.DeviceNumber = audioInDeviceIndex;
                         _waveInEvent.WaveFormat = _waveSourceFormat;
-                        _waveInEvent.DataAvailable += LocalAudioSampleAvailable;
+                        _waveInEvent.DataAvailable += LocalAudioSampleAvailableTEST;
+                        
                         
                         
                     }
@@ -223,7 +232,7 @@ namespace SIPSorceryMedia.Windows
 
                 if (_waveInEvent != null)
                 {
-                    _waveInEvent.DataAvailable -= LocalAudioSampleAvailable;
+                    _waveInEvent.DataAvailable -= LocalAudioSampleAvailableTEST;
                     _waveInEvent.StopRecording();
                 }
             }
@@ -293,13 +302,26 @@ namespace SIPSorceryMedia.Windows
             // https://github.com/naudio/NAudio/blob/master/NAudio/Wave/WaveOutputs/WaveBuffer.cs
             // WaveBuffer wavBuffer = new WaveBuffer(args.Buffer.Take(args.BytesRecorded).ToArray());
             // byte[] encodedSample = _audioEncoder.EncodeAudio(wavBuffer.ShortBuffer, _audioFormatManager.SelectedFormat);
-
-            byte[] buffer = args.Buffer.Take(args.BytesRecorded).ToArray();         
+                     
+            byte[] buffer = args.Buffer.Take(args.BytesRecorded).ToArray();
+            
             short[] pcm = buffer.Where((x, i) => i % 2 == 0).Select((y, i) => BitConverter.ToInt16(buffer, i * 2)).ToArray();
+
+            //short[] pcm = new short[buffer.Length / 2];
+            //int x = 0;
+            //for (int i=0; i < buffer.Length; i=i+2)
+            //{
+            //    byte[] b = new byte[2] { buffer[i], buffer[i + 1] };
+            //    pcm[x] = BitConverter.ToInt16(b, 0);
+            //    x++;
+            //}
+         
             byte[] encodedSample = _audioEncoder.EncodeAudio(pcm, _audioFormatManager.SelectedFormat);
-            OnAudioSourceEncodedSample?.BeginInvoke((uint)bufferSample.Length, bufferSample, CallBackInvoke, null);
+            OnAudioSourceEncodedSample?.BeginInvoke((uint)encodedSample.Length, encodedSample, CallBackInvoke, null);
 
         }
+
+
         byte[] bufferSample;
 
         public IAsyncResult EndInvokeRes { get; private set; }
@@ -329,7 +351,12 @@ namespace SIPSorceryMedia.Windows
             {
             
                 var pcmSample = _audioEncoder.DecodeAudio(payload, _audioFormatManager.SelectedFormat);
+
+                //var pcmSample2 = _audioEncoder.DecodeAudio(payload, _audioFormatManager.SupportedFormats[2]);
+
                 byte[] pcmBytes = new byte[pcmSample.Length * 2];
+
+
                 for (int i = 0; i < pcmSample.Length; i++)
                 {
                     var b = BitConverter.GetBytes(pcmSample[i]);
@@ -338,7 +365,7 @@ namespace SIPSorceryMedia.Windows
                     pcmBytes[x + 1] = b[1];
                 }
 
-                // byte[] pcmBytes = pcmSample.SelectMany(x => BitConverter.GetBytes(x)).ToArray();
+              //  byte[] pcmBytes2 = pcmSample.SelectMany(x => BitConverter.GetBytes(x)).ToArray();
 
 
                 //Clear Buffer if has delay
@@ -347,6 +374,7 @@ namespace SIPSorceryMedia.Windows
                 {
                     count_samples_sent = 0;
                     _waveProvider.ClearBuffer();
+                    Console.WriteLine("Audio buffer cleared " + _waveProvider.BufferDuration.TotalMinutes);
                 }            
 
                 _waveProvider?.AddSamples(pcmBytes, 0, pcmBytes.Length);

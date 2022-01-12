@@ -21,15 +21,15 @@ namespace RespectPhone.SVOIP
         public static string url = "aster.institutrb.ru:5160";
         public static SipTransporManager transport = SipTransporManager.INS;
         SIPRegistrationUserAgent regAgent;
-        SIPUserAgent sipAgent;
-        SIPUserAgent transferSipAgent;
+        SIPUserAgent2 sipAgent;
+        SIPUserAgent2 transferSipAgent;
         SSipAccount sacc;
         SIPServerUserAgent incoming_server;        
         bool micOn = true;
         bool spOn = true;
         public bool isTransferAttended = false;
         List<string> incomingCallID = new List<string>();
-        VoIPMediaSession voipMediaSession { get { return CreateMediaSession(); } }
+        VoIPMediaSession voipMediaSession { get; set; }
 
         public bool InCall { get { return sipAgent.IsCallActive || sipAgent.IsRinging; } }
 
@@ -59,11 +59,11 @@ namespace RespectPhone.SVOIP
             
 
 
-            transferSipAgent = new SIPUserAgent(transport.SIPTransport, null, true, sacc);
+            transferSipAgent = new SIPUserAgent2(transport.SIPTransport, null, true, sacc);
             transferSipAgent.OnIncomingCall += TranferTransportIncomingCall;
             transferSipAgent.ClientCallAnswered += SipAgent_ClientCallAnswered;
 
-            sipAgent = new SIPUserAgent(transport.SIPTransport, null, true, sacc);
+            sipAgent = new SIPUserAgent2(transport.SIPTransport, null, true, sacc);
             sipAgent.OnIncomingCall += IncoimingCallReceive;
 
             sipAgent.ClientCallAnswered += SipAgent_ClientCallAnswered;
@@ -77,7 +77,7 @@ namespace RespectPhone.SVOIP
 
         
 
-        private void TranferTransportIncomingCall(SIPUserAgent arg1, SIPRequest arg2)
+        private void TranferTransportIncomingCall(SIPUserAgent2 arg1, SIPRequest arg2)
         {
             
         }
@@ -123,7 +123,13 @@ namespace RespectPhone.SVOIP
         {
             try
             {
+                if (voipMediaSession != null)
+                {
+                    voipMediaSession.Dispose();
+                    voipMediaSession = null;
+                }
                 var windowsAudioEndPointRec = new WindowsAudioEndPoint(new AudioEncoder());
+             
                 // var windowsAudioEndPointSend = new WindowsAudioEndPoint(new AudioEncoder());
                 //   var windowsVideoEndPoint = new WindowsVideoEndPoint(new SIPSorceryMedia.Encoders.VpxVideoEncoder());
 
@@ -138,9 +144,11 @@ namespace RespectPhone.SVOIP
                 // Fallback video source if a Windows webcam cannot be accessed.
                 //            var testPatternSource = new VideoTestPatternSource();
 
-                var voipMediaSession = new VoIPMediaSession(mediaEndPoints);
-                voipMediaSession.AcceptRtpFromAny = true;
-                return voipMediaSession;
+                //var voipMediaSession = 
+                //voipMediaSession.AcceptRtpFromAny = true;
+                //voipMediaSession.rtp
+              
+                return new VoIPMediaSession(mediaEndPoints) { AcceptRtpFromAny = true }; ;
             }
             catch (Exception ex)
             {
@@ -181,7 +189,7 @@ namespace RespectPhone.SVOIP
                 incomingCallID.Remove(e.Header.CallId);
         }
 
-        private void IncoimingCallReceive(SIPUserAgent agent, SIPRequest req)
+        private void IncoimingCallReceive(SIPUserAgent2 agent, SIPRequest req)
         {
             try
             {
@@ -247,7 +255,8 @@ namespace RespectPhone.SVOIP
                 {
                     try
                     {
-                       
+                        
+                            voipMediaSession=CreateMediaSession();
                         sipAgent.Answer(incoming_server, voipMediaSession);
                     }
                     catch { }
@@ -269,6 +278,8 @@ namespace RespectPhone.SVOIP
             {               
                
                 var dest = num + "@" + url;
+                
+                    voipMediaSession = CreateMediaSession();
                 bool callResult = await sipAgent.Call(dest, user, pass, voipMediaSession);
             }
         }
@@ -280,7 +291,8 @@ namespace RespectPhone.SVOIP
                 sipAgent.PutOnHold();
                 sipAgent.MediaSession.SetMediaStreamStatus(SIPSorcery.Net.SDPMediaTypesEnum.audio, SIPSorcery.Net.MediaStreamStatusEnum.Inactive);
                 var dest = num + "@" + url;
-              
+                
+                    voipMediaSession = CreateMediaSession();
                 var res = await transferSipAgent.Call(dest, user, pass, voipMediaSession);
                 if (res)
                 {
@@ -454,6 +466,16 @@ namespace RespectPhone.SVOIP
                 }
               //  Byte.TryParse(xt, out byte x);
                 
+            }
+        }
+
+        public void ClearMediaSession()
+        {
+            if (voipMediaSession != null)
+            {
+                voipMediaSession.Dispose();
+                voipMediaSession = null;
+                GC.Collect();
             }
         }
         #endregion
