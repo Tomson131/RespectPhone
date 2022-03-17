@@ -5,8 +5,10 @@ using RespectPhone.SVOIP;
 using SIPSorcery.SIP;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,22 +36,54 @@ namespace RespectPhone
         int seconds = 0;
         System.Timers.Timer timer = new System.Timers.Timer();
         bool auto_answer = false;
+        bool away = false;
         System.Windows.Forms.NotifyIcon nIcon = new System.Windows.Forms.NotifyIcon();
         private MediaPlayer snd;
         CallItem call_item = null;
 
         public MainWindow()
         {
+            CheckDoubleApp();
             InitializeComponent();
             InitNotIcon();
+           
             Login();
+        }
+
+        private void CheckDoubleApp()
+        {
+            try
+            {
+                string processName = "RespectPhone";
+                var pp = Process.GetProcesses();
+                var isNew = pp.Where(p => p.ProcessName == processName).ToList().Count<2;
+                
+
+                if (isNew)
+                {
+                   
+                    return;
+                }
+                else
+                {
+
+                    MessageBox.Show("Софтфон уже запущен!", "", MessageBoxButton.OK);
+                    this.Close();
+                }
+            }
+            catch
+            {
+
+            }
+            
+
         }
 
         public async void Login(bool first=true)
         {
             var w = new WebLogin();
             mLogin.Text = RespSIPAccount.INS.rlogin;
-            mPass.Text = RespSIPAccount.INS.rpass;
+            mPass.Text = RespSIPAccount.INS.GetPass();
             SetLoader(1);
             if (first)
                 RespSIPAccount.ReadConf();
@@ -187,6 +221,10 @@ namespace RespectPhone
 
         private void Originatecall(string data)
         {
+            away = false;
+            AwayBtnOff.Visibility = Visibility.Collapsed;
+            AwayBtn.Visibility = Visibility.Visible;
+
             if (CallBtn.Visibility == Visibility.Visible)
             {
                 Num.Text = data;
@@ -221,10 +259,11 @@ namespace RespectPhone
                             StartTimer();                        
                         break;
                     case CallState.Ringing:
-                        Dispatcher.BeginInvoke((Action)(() =>
-                        {
-                            Time.Content = "Calling...";
-                        }));
+                        if (!away)
+                            Dispatcher.BeginInvoke((Action)(() =>
+                            {
+                                Time.Content = "Calling...";
+                            }));
                        
                         break;
                     case CallState.Answered:
@@ -249,6 +288,11 @@ namespace RespectPhone
 
         private void IncomingCall(object sender, object e)
         {
+            if (away)
+            {
+                Phone.AnswerIncoming(true);
+                return;
+            }
             Console.WriteLine("call " + e.ToString()); /// need to parse 
             SIPRequest c = null;
             if (e is SIPRequest)
@@ -258,6 +302,7 @@ namespace RespectPhone
                 if (this.WindowState == WindowState.Minimized)
                     this.WindowState = WindowState.Normal;
                 call_item = RLog.AddCallItem(c.Header.From.FromName, false,false);
+               
                 if (auto_answer) {
                     Phone.AnswerIncoming();
                 }
@@ -477,7 +522,18 @@ namespace RespectPhone
             AutoAnswerOn.Visibility = Visibility.Visible;
             AutoAnswerOff.Visibility = Visibility.Collapsed;
         }
-
+        private void AwayBtn_Click(object sender, RoutedEventArgs e)
+        {
+            away = true;
+            AwayBtn.Visibility = Visibility.Collapsed;
+            AwayBtnOff.Visibility = Visibility.Visible;
+        }
+        private void AwayBtnOff_Click(object sender, RoutedEventArgs e)
+        {
+            away = false;
+            AwayBtnOff.Visibility = Visibility.Collapsed;
+            AwayBtn.Visibility = Visibility.Visible;
+        }
         private void Num_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
@@ -489,7 +545,7 @@ namespace RespectPhone
         private  void Login_Click(object sender, RoutedEventArgs e)
         {
             RespSIPAccount.INS.rlogin = mLogin.Text.Trim();
-            RespSIPAccount.INS.rpass= mPass.Text.Trim();
+            RespSIPAccount.INS.SetPass(mPass.Text.Trim());
             Login(false);
         }
 
@@ -721,5 +777,7 @@ namespace RespectPhone
             CallList cl = new CallList();
             cl.Show();
         }
+
+       
     }
 }

@@ -52,21 +52,21 @@ namespace RespectPhone
             authenticationId = w.extension;
             displayName = w.name;
             domainHost = w.host + ":" + w.port;
-            registerPassword = w.secret;
+            SetExtPass(w.secret);
 
         }
 
         public string displayName { get; set; } = "test";
-        public string userName { get; set; } = "4777";
-        public string authenticationId { get; set; } = "4777";
-        public string registerPassword { get; set; } = "1q2w3e4r";
+        public string userName { get; set; } = "test";
+        public string authenticationId { get; set; } = "test";
+        public string registerPassword { get; set; } = "test";
         public string domainHost { get; set; } = "aster.institutrb.ru:5160";
         public string domainPort { get; set; } = "";
         public string rlogin { get; set; } = "test";
         public string rpass { get; set; } = "test";
 
         public bool AnswerMyExt { get; set; } = true;
-        public bool UseConfExtension { get; set; } = true;
+        public bool UseConfExtension { get; set; } = false;
         public string UpdateUrl { get; set; } = "http://respectrb.ru/versions.txt";
 
         public static void ReadConf()
@@ -114,6 +114,68 @@ namespace RespectPhone
             {
                 Console.WriteLine(ex.Message);
             }
+        }
+
+        public void SetPass(string p)
+        {
+            try
+            {
+                var px = Convert.ToBase64String(Encoding.UTF8.GetBytes(p));
+                var slt = Convert.ToBase64String(Encoding.UTF8.GetBytes("xsdf"));
+                px += slt;
+                rpass = Convert.ToBase64String(Encoding.UTF8.GetBytes(px));
+            }
+            catch(Exception ex)
+            {
+                RLog.SaveExError(ex);
+            }
+        }
+        public string GetPass()
+        {
+            var p = "";
+            try
+            {
+               
+                p = Encoding.UTF8.GetString(Convert.FromBase64String(rpass));
+                var slt = Convert.ToBase64String(Encoding.UTF8.GetBytes("xsdf"));
+                p=p.Replace(slt, "");
+                p= Encoding.UTF8.GetString(Convert.FromBase64String(p));
+            }
+            catch(Exception ex)
+            {
+                RLog.SaveExError(ex);
+            }
+            return p;
+        }
+        public void SetExtPass(string p)
+        {
+            try
+            {
+                var px = Convert.ToBase64String(Encoding.UTF8.GetBytes(p));
+            var slt = Convert.ToBase64String(Encoding.UTF8.GetBytes("xsdf"));
+            px += slt;
+            registerPassword = Convert.ToBase64String(Encoding.UTF8.GetBytes(px));
+            }
+                        catch (Exception ex)
+            {
+                RLog.SaveExError(ex);
+            }
+        }
+        public string GetExtPass()
+        {
+            var p = "";
+            try
+            {
+                p = Encoding.UTF8.GetString(Convert.FromBase64String(registerPassword));
+            var slt = Convert.ToBase64String(Encoding.UTF8.GetBytes("xsdf"));
+            p = p.Replace(slt, "");
+            p = Encoding.UTF8.GetString(Convert.FromBase64String(p));
+            }
+                        catch (Exception ex)
+            {
+                RLog.SaveExError(ex);
+            }
+            return p;
         }
     }
 }

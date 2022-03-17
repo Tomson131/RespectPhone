@@ -17,7 +17,7 @@ namespace RespectPhone.Connections
             WebLogin w = new WebLogin();
             try
             {
-                string pass = GetMd5Hash(RespSIPAccount.INS.rpass);
+                string pass = GetMd5Hash(RespSIPAccount.INS.GetPass());
                 MultiPostSendAPI send = new MultiPostSendAPI();
                 send.AddParam("login", RespSIPAccount.INS.rlogin, MultiParamTypeAPI.Field);
                 send.AddParam("password",pass , MultiParamTypeAPI.Field);

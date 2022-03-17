@@ -1,3 +1,5 @@
+"C:\Program Files (x86)\Inno Setup 5\ISCC.exe" RespectPhone.iss
+
 
 cd RespectPhone
 cd bin

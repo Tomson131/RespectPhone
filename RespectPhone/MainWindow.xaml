@@ -188,6 +188,28 @@
                         </Image.ToolTip>
                     </Image>
                 </Button>
+                <Button Name="AwayBtn" Click="AwayBtn_Click" Visibility="Visible" Cursor="Hand" BorderThickness="0" Background="Transparent">
+                    <Image Height="25" Source="pack://siteoforigin:,,,/Resources/away_off.png">
+                        <Image.ToolTip>
+                            <ToolTip>
+                                <Label>
+                                    В сети / не в сети
+                                </Label>
+                            </ToolTip>
+                        </Image.ToolTip>
+                    </Image>
+                </Button>
+                <Button Name="AwayBtnOff" Click="AwayBtnOff_Click" Visibility="Collapsed" Cursor="Hand" BorderThickness="0" Background="Transparent">
+                    <Image Height="25" Source="pack://siteoforigin:,,,/Resources/away_on.png">
+                        <Image.ToolTip>
+                            <ToolTip>
+                                <Label>
+                                    В сети / не в сети
+                                </Label>
+                            </ToolTip>
+                        </Image.ToolTip>
+                    </Image>
+                </Button>
             </StackPanel>
         </StackPanel>
         <Grid Margin="0,25,0,0" Name="LoginGrid" Visibility="Collapsed" Background="Black">

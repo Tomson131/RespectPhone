@@ -20,52 +20,72 @@ namespace RespectPhone
     /// </summary>
     public partial class RSettings : Window
     {
+        bool loaded = false;
         public RSettings()
         {
             InitializeComponent();
             UseExtConf.IsChecked = RespSIPAccount.INS.UseConfExtension;
             ats_log.Text = RespSIPAccount.INS.authenticationId;
-            ats_pass.Text = RespSIPAccount.INS.registerPassword;
+            ats_pass.Password = RespSIPAccount.INS.registerPassword;
             ats_host.Text = RespSIPAccount.INS.domainHost;
             e_log.Text = RespSIPAccount.INS.rlogin;
-            e_pass.Text = RespSIPAccount.INS.rpass;
+            e_pass.Password = RespSIPAccount.INS.rpass;
             Vers.Content = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            loaded = true;
         }
 
         private void UseExtConf_Checked(object sender, RoutedEventArgs e)
         {
+            if (!loaded) return;
             RespSIPAccount.INS.UseConfExtension = true;
         }
 
         private void UseExtConf_Unchecked(object sender, RoutedEventArgs e)
         {
+            if (!loaded) return;
+
             RespSIPAccount.INS.UseConfExtension = false;
         }
 
         private void ats_log_TextChanged(object sender, TextChangedEventArgs e)
         {
+            if (!loaded) return;
             RespSIPAccount.INS.authenticationId = ats_log.Text.Trim();
             RespSIPAccount.INS.userName = ats_log.Text.Trim();
         }
 
         private void ats_pass_TextChanged(object sender, TextChangedEventArgs e)
         {
-            RespSIPAccount.INS.registerPassword = ats_pass.Text.Trim();
+            if (!loaded) return;
+            RespSIPAccount.INS.SetExtPass(ats_pass.Password.Trim());
         }
+        private void ats_pass_TextChanged(object sender, RoutedEventArgs e)
+        {
+            if (!loaded) return;
+            RespSIPAccount.INS.SetExtPass(ats_pass.Password.Trim());
 
+        }
         private void ats_host_TextChanged(object sender, TextChangedEventArgs e)
         {
+            if (!loaded) return;
             RespSIPAccount.INS.domainHost = ats_host.Text.Trim();
         }
 
         private void e_log_TextChanged(object sender, TextChangedEventArgs e)
         {
+            if (!loaded) return;
             RespSIPAccount.INS.rlogin = e_log.Text.Trim();
         }
 
         private void e_pass_TextChanged(object sender, TextChangedEventArgs e)
         {
-            RespSIPAccount.INS.rpass= e_pass.Text.Trim();
+            if (!loaded) return;
+            RespSIPAccount.INS.SetPass(e_pass.Password.Trim());
+        }
+        private void e_pass_TextChanged(object sender, RoutedEventArgs e)
+        {
+            if (!loaded) return;
+            RespSIPAccount.INS.SetPass(e_pass.Password.Trim());
         }
 
         private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
@@ -76,7 +96,10 @@ namespace RespectPhone
 
         private void Border_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            RespSIPAccount.INS.SaveToFile();
             this.Close();
         }
+
+        
     }
 }

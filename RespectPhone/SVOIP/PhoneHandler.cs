@@ -45,7 +45,7 @@ namespace RespectPhone.SVOIP
         public PhoneHandler(RespSIPAccount acc)
         {
             user = acc.authenticationId;
-            pass = acc.registerPassword;
+            pass = acc.GetExtPass();
             url = acc.domainHost;
             sacc = new SSipAccount(user, pass, url);
             transport.SipRequestReseived += SIPLOG;
