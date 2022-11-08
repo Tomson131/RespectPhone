@@ -94,7 +94,9 @@ namespace RespectPhone.SVOIP
                 case SIPResponseStatusCodesEnum.Ok:
                     CallStateCange?.Invoke(this, CallState.InCall);
                     break;
-                
+                case SIPResponseStatusCodesEnum.BusyHere:
+                    CallStateCange?.Invoke(this, CallState.Busy);
+                    break;
 
             }
         }

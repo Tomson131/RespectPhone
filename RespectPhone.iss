@@ -99,6 +99,7 @@ Source: "RespectPhone\Resources\wf_ic_settings.png"; DestDir: "{app}\Resources"
 Source: "RespectPhone\Resources\beep1.wav"; DestDir: "{app}\Resources"
 Source: "RespectPhone\Resources\Ringing.wav"; DestDir: "{app}\Resources"
 Source: "RespectPhone\Resources\tube_sound.wav"; DestDir: "{app}\Resources"
+Source: "RespectPhone\Resources\busy_tone.wav"; DestDir: "{app}\Resources"
 Source: "RespectPhone\Resources\away_off.png"; DestDir: "{app}\Resources"
 Source: "RespectPhone\Resources\away_on.png"; DestDir: "{app}\Resources"
 

@@ -39,6 +39,7 @@ namespace RespectPhone
         bool away = false;
         System.Windows.Forms.NotifyIcon nIcon = new System.Windows.Forms.NotifyIcon();
         private MediaPlayer snd;
+        private MediaPlayer bsnd;
         CallItem call_item = null;
 
         public MainWindow()
@@ -247,6 +248,8 @@ namespace RespectPhone
                     case CallState.Completed:
                         StopRing();
                         StopTimer();
+                        if (st == CallState.Busy)
+                            PlayBeep(true);
                         if (st == CallState.Completed)
                             PlayBeep();
                         Dispatcher.BeginInvoke((Action)(() =>
@@ -716,17 +719,28 @@ namespace RespectPhone
 
             }
         }
-        public void PlayBeep()
+        public void PlayBeep(bool busy = false)
         {
             try
             {
                 Phone.ClearMediaSession();
+
+               
                 Dispatcher.BeginInvoke((Action)(() =>
                 {
-                    snd = new MediaPlayer();
-                    snd.Open(new Uri(System.Environment.CurrentDirectory + "\\resources\\beep1.wav", UriKind.Relative));
-                    snd.Volume = 0.8;
-                    snd.Play();
+
+                    bsnd = new MediaPlayer();
+                    if (busy)
+                    {
+                        bsnd.Open(new Uri(System.Environment.CurrentDirectory + "\\resources\\busy_tone.wav", UriKind.Relative));
+                    }
+                    else
+                    {
+                        bsnd.Open(new Uri(System.Environment.CurrentDirectory + "\\resources\\beep1.wav", UriKind.Relative));
+                    }
+
+                    bsnd.Volume = 0.8;
+                    bsnd.Play();                    
                 }));
             }
             catch (Exception ex)
