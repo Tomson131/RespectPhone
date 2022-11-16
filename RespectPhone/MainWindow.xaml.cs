@@ -247,13 +247,15 @@ namespace RespectPhone
                     case CallState.Busy:
                     case CallState.Completed:
                         StopRing();
-                        StopTimer();
+                        StopTimer();                        
                         if (st == CallState.Busy)
                             PlayBeep(true);
-                        if (st == CallState.Completed)
-                            PlayBeep();
+                        
                         Dispatcher.BeginInvoke((Action)(() =>
                         {
+                            if(CallBtn.Visibility!=Visibility.Visible)
+                                if (st == CallState.Completed)
+                                    PlayBeep();
                             CallBtn.Visibility = Visibility.Visible;
                         }));
                         break;
