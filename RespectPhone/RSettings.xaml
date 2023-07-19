@@ -80,7 +80,10 @@
                             </PasswordBox>
                         </Grid>
                     </Grid>
+                    <CheckBox Name="AutoAnsMyExt" Foreground="#FFF" Unchecked="AutoAnsMyExt_Unchecked" Checked="AutoAnsMyExt_Checked">Автоответ на мой внутренний</CheckBox>
+                    <CheckBox Name="AlwaysOnTop" Foreground="#FFF" Unchecked="AlwaysOnTop_Unchecked" Checked="AlwaysOnTop_Checked">По верх окон</CheckBox>
                     <Label Foreground="#FFF" Margin="10" Name="Vers"></Label>
+                    
                 </StackPanel>
                 
             </ScrollViewer>

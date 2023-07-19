@@ -68,6 +68,7 @@ namespace RespectPhone
         public bool AnswerMyExt { get; set; } = true;
         public bool UseConfExtension { get; set; } = false;
         public string UpdateUrl { get; set; } = "http://respectrb.ru/versions.txt";
+        public bool AlwaysOnTop { get; set; } = false;
 
         public static void ReadConf()
         {

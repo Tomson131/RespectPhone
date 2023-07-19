@@ -177,7 +177,7 @@
                         </Image.ToolTip>
                     </Image>
                 </Button>
-                <Button Name="AutoAnswerOff" Click="AutoAnswerOff_Click" Visibility="Visible" Cursor="Hand" BorderThickness="0" Background="Transparent">
+                <Button Name="AutoAnswerOff" Click="AutoAnswerOff_Click" Visibility="Collapsed" Cursor="Hand" BorderThickness="0" Background="Transparent">
                     <Image Height="25" Source="pack://siteoforigin:,,,/Resources/aa_off.png">
                         <Image.ToolTip>
                             <ToolTip>
@@ -193,7 +193,7 @@
                         <Image.ToolTip>
                             <ToolTip>
                                 <Label>
-                                    В сети / не в сети
+                                    Принимать / Не принимать входящие
                                 </Label>
                             </ToolTip>
                         </Image.ToolTip>
@@ -204,7 +204,7 @@
                         <Image.ToolTip>
                             <ToolTip>
                                 <Label>
-                                    В сети / не в сети
+                                    Принимать / Не принимать входящие
                                 </Label>
                             </ToolTip>
                         </Image.ToolTip>

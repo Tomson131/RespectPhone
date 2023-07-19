@@ -31,6 +31,8 @@ namespace RespectPhone
             e_log.Text = RespSIPAccount.INS.rlogin;
             e_pass.Password = RespSIPAccount.INS.rpass;
             Vers.Content = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            AutoAnsMyExt.IsChecked = RespSIPAccount.INS.AnswerMyExt;
+            AlwaysOnTop.IsChecked = RespSIPAccount.INS.AlwaysOnTop;
             loaded = true;
         }
 
@@ -100,6 +102,28 @@ namespace RespectPhone
             this.Close();
         }
 
-        
+        private void AutoAnsMyExt_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (!loaded) return;
+            RespSIPAccount.INS.AnswerMyExt = false;
+        }
+
+        private void AutoAnsMyExt_Checked(object sender, RoutedEventArgs e)
+        {
+            if (!loaded) return;
+            RespSIPAccount.INS.AnswerMyExt = true;
+        }
+
+        private void AlwaysOnTop_Checked(object sender, RoutedEventArgs e)
+        {
+            if (!loaded) return;
+            RespSIPAccount.INS.AlwaysOnTop = true;
+        }
+
+        private void AlwaysOnTop_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (!loaded) return;
+            RespSIPAccount.INS.AlwaysOnTop = false;
+        }
     }
 }

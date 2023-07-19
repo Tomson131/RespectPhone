@@ -42,6 +42,8 @@ namespace RespectPhone
         private MediaPlayer bsnd;
         CallItem call_item = null;
 
+        public bool ForceUpdateStart { get; set; } = false;
+
         public MainWindow()
         {
             CheckDoubleApp();
@@ -139,6 +141,10 @@ namespace RespectPhone
         {
             try
             {
+                //ForceUpdateStart = true;
+                //AutoUpdater.Start(RespSIPAccount.INS.UpdateUrl);
+
+
                 if (AutoUpdater.DownloadUpdate())
                 {
 
@@ -249,7 +255,8 @@ namespace RespectPhone
                         StopRing();
                         StopTimer();                        
                         if (st == CallState.Busy)
-                            PlayBeep(true);
+                            if(!away)
+                                PlayBeep(true);
                         
                         Dispatcher.BeginInvoke((Action)(() =>
                         {
@@ -293,16 +300,19 @@ namespace RespectPhone
 
         private void IncomingCall(object sender, object e)
         {
-            if (away)
-            {
-                Phone.AnswerIncoming(true);
-                return;
-            }
+            
             Console.WriteLine("call " + e.ToString()); /// need to parse 
             SIPRequest c = null;
             if (e is SIPRequest)
                 c = (SIPRequest)e;
+            if (c == null) return;
 
+            var its_me = c.Header.From.FromURI.User == RespSIPAccount.INS.authenticationId;
+            if (away && !its_me)
+            {
+                Phone.AnswerIncoming(true);
+                return;
+            }
             Dispatcher.BeginInvoke((Action)(() => {
                 if (this.WindowState == WindowState.Minimized)
                     this.WindowState = WindowState.Normal;
@@ -499,6 +509,17 @@ namespace RespectPhone
         private void Window_GotFocus(object sender, RoutedEventArgs e)
         {
             Num.Focus();
+            if (RespSIPAccount.INS.AlwaysOnTop)
+            {
+                if (!this.Topmost)
+                    this.Topmost = true;
+            }
+            else
+            {
+                if (this.Topmost)
+                    this.Topmost = false;
+            }
+
         }
 
         private void Window_Unloaded(object sender, RoutedEventArgs e)
@@ -601,7 +622,7 @@ namespace RespectPhone
         {
             try
             {
-                AutoUpdater.Start(RespSIPAccount.INS.UpdateUrl);
+                AutoUpdater.Start(RespSIPAccount.INS.UpdateUrl);                
                 AutoUpdater.ReportErrors = false;
                 AutoUpdater.RunUpdateAsAdmin = false;
                 AutoUpdater.ApplicationExitEvent += AutoUpdater_ApplicationExitEvent;
@@ -668,6 +689,22 @@ namespace RespectPhone
                         }
                     }));
                 }
+                //else if (ForceUpdateStart)
+                //{
+                //    try
+                //    {
+                //        if (AutoUpdater.DownloadUpdate(args))
+                //        {
+
+                //            AutoUpdater_ApplicationExitEvent();
+                //        }
+                //    }
+                //    catch (Exception exception)
+                //    {
+                //        WMessageBox.Show(exception.Message, false, true);
+                //        this.Close();
+                //    }
+                //}
             }
             catch
             {

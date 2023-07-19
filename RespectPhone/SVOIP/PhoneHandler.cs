@@ -399,6 +399,7 @@ namespace RespectPhone.SVOIP
 
         private void SetAudioStatus()
         {
+            if(sipAgent.MediaSession!=null)
             if(micOn && spOn)
             {
                 sipAgent.MediaSession.SetMediaStreamStatus(SIPSorcery.Net.SDPMediaTypesEnum.audio, SIPSorcery.Net.MediaStreamStatusEnum.SendRecv);
