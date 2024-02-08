@@ -1,4 +1,5 @@
-﻿using SIPSorcery.Media;
+﻿using Newtonsoft.Json;
+using SIPSorcery.Media;
 using SIPSorcery.SIP;
 using SIPSorcery.SIP.App;
 using SIPSorceryMedia.Abstractions;
@@ -84,7 +85,7 @@ namespace RespectPhone.SVOIP
 
         private void SIPRESPLOG(object sender, SIPResponse e)
         {
-            Console.WriteLine("CALLSTATE:" + e.Status);
+            //Console.WriteLine("CALLSTATE:" + e.Status);
             switch (e.Status)
             {
                 case SIPResponseStatusCodesEnum.SessionProgress:
@@ -173,7 +174,18 @@ namespace RespectPhone.SVOIP
                 CheckCallId(e);
                 CallStateCange?.Invoke(this, CallState.Cancelled);
             }
-            
+
+            if (e.Method == SIPMethodsEnum.MESSAGE)
+            {
+                //CheckCallId(e);
+                //CallStateCange?.Invoke(this, CallState.Cancelled);
+                //Console.WriteLine(JsonConvert.SerializeObject(e));
+                Console.WriteLine("CallId: " + e.Header.CallId);
+                Console.WriteLine("Tag: "+e.Header.From.FromTag);
+                Console.WriteLine(e.Body != null ? e.Body.ToString() : "EMPTY");
+                IncomeMessageReceived?.Invoke(this, e);
+
+            }
 
 
             if (e.Method == SIPMethodsEnum.OPTIONS) return;
@@ -181,7 +193,7 @@ namespace RespectPhone.SVOIP
             //Console.WriteLine(e.Method);
             //Console.WriteLine(e.Header.ToString());
             //Console.WriteLine("-----------------------------");
-            //Console.WriteLine(e.Body != null? e.Body.ToString():"EMPTY");
+            //Console.WriteLine(e.Body != null ? e.Body.ToString() : "EMPTY");
             //Console.WriteLine("=============================");
         }
 
@@ -245,6 +257,7 @@ namespace RespectPhone.SVOIP
         public event EventHandler<object> RegisterStateChanged;
         public event EventHandler<object> RegistrationSucceded;
         public event EventHandler<object> CallStateCange;
+        public event EventHandler<object> IncomeMessageReceived;      
         #endregion
 
 

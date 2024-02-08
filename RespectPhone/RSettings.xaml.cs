@@ -33,6 +33,7 @@ namespace RespectPhone
             Vers.Content = Assembly.GetExecutingAssembly().GetName().Version.ToString();
             AutoAnsMyExt.IsChecked = RespSIPAccount.INS.AnswerMyExt;
             AlwaysOnTop.IsChecked = RespSIPAccount.INS.AlwaysOnTop;
+            e_log_url.Text = RespSIPAccount.INS.base_url;
             loaded = true;
         }
 
@@ -124,6 +125,12 @@ namespace RespectPhone
         {
             if (!loaded) return;
             RespSIPAccount.INS.AlwaysOnTop = false;
+        }
+
+        private void e_log_url_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (!loaded) return;
+            RespSIPAccount.INS.base_url = e_log_url.Text.Trim();
         }
     }
 }

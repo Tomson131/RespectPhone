@@ -27,7 +27,7 @@ namespace WPFTEST
         event EventHandler<object> RegisterStateChanged;
         event EventHandler<object> RegistrationSucceded;
         event EventHandler<object> CallStateCange;
-
+        event EventHandler<object> IncomeMessageReceived;
         void SetDTMF(string act);
         void ClearMediaSession();
     }

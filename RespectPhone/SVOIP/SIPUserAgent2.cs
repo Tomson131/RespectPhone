@@ -476,8 +476,7 @@ namespace SIPSorcery.SIP.App
             m_uac.CallTrying += ClientCallTryingHandler;
             m_uac.CallRinging += ClientCallRingingHandler;
             m_uac.CallAnswered += ClientCallAnsweredHandler;
-            m_uac.CallFailed += ClientCallFailedHandler;
-
+            m_uac.CallFailed += ClientCallFailedHandler;            
             // Can be DNS lookups involved in getting the call destination.
             SIPEndPoint serverEndPoint = await m_uac.GetCallDestination(sipCallDescriptor).ConfigureAwait(false);
 

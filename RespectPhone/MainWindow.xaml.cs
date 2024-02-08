@@ -1,4 +1,5 @@
 ﻿using AutoUpdaterDotNET;
+using Newtonsoft.Json.Linq;
 using RespectPhone.Connections;
 using RespectPhone.Helpers;
 using RespectPhone.SVOIP;
@@ -41,7 +42,7 @@ namespace RespectPhone
         private MediaPlayer snd;
         private MediaPlayer bsnd;
         CallItem call_item = null;
-
+        List<string> MessageIds= new List<string>();
         public bool ForceUpdateStart { get; set; } = false;
 
         public MainWindow()
@@ -110,6 +111,7 @@ namespace RespectPhone
             Phone.IncomingCallReceived += IncomingCall;
             Phone.RegisterStateChanged += RegisterStateChanged;
             Phone.CallStateCange += Phone_CallStateCange;
+            Phone.IncomeMessageReceived += IncomingMessage;
             GlobalEvent.INS.RiseAction += RiseAction;
 
             timer.Interval = 1000;
@@ -295,6 +297,61 @@ namespace RespectPhone
             else
             {
                 ChangeStatusLabel(false);
+            }
+        }
+
+
+        private void IncomingMessage(object sender, object e)
+        {
+            Console.WriteLine("call " + e.ToString());
+            SIPRequest c = null;
+            if (e is SIPRequest)
+                c = (SIPRequest)e;
+            if (c == null) return;
+
+            if (c.Method == SIPMethodsEnum.MESSAGE)
+            {
+                if (!MessageIds.Contains(c.Header.CallId))
+                {
+                    MessageIds.Add(c.Header.CallId);
+                    ParseIncomeMessage(c.Body);
+                }
+            }
+
+
+        }
+
+        private void ParseIncomeMessage(string body)
+        {
+            try
+            {
+                var json = JObject.Parse(body);
+                var action = JSONHelper.GetString(json["action"]);
+
+                switch(action) {
+
+                    case "hang_up":
+                        Dispatcher.BeginInvoke((Action)(()=>{
+                            Num_Button_Click(HangUpBtn, null);
+                        }));
+                        
+                        break;
+                    case "message":
+                        Dispatcher.BeginInvoke((Action)(() => {
+                            InMessages msgw = new InMessages(JSONHelper.GetString(json["text"]));
+                            msgw.Show();
+                            //nIcon.ShowBalloonTip(10, "Сообщение", JSONHelper.GetString(json["text"]), System.Windows.Forms.ToolTipIcon.Info);
+                        }));
+
+                        break;
+                }
+
+
+            }
+            catch (Exception ex)
+            {
+
+                throw;
             }
         }
 
@@ -622,6 +679,16 @@ namespace RespectPhone
         {
             try
             {
+                if (RespSIPAccount.INS.AlwaysOnTop)
+                {
+                    if (!this.Topmost)
+                        this.Topmost = true;
+                }
+                else
+                {
+                    if (this.Topmost)
+                        this.Topmost = false;
+                }
                 AutoUpdater.Start(RespSIPAccount.INS.UpdateUrl);                
                 AutoUpdater.ReportErrors = false;
                 AutoUpdater.RunUpdateAsAdmin = false;

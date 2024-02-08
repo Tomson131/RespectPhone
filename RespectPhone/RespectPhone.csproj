@@ -174,6 +174,9 @@
     <Compile Include="IncomingCall.xaml.cs">
       <DependentUpon>IncomingCall.xaml</DependentUpon>
     </Compile>
+    <Compile Include="InMessages.xaml.cs">
+      <DependentUpon>InMessages.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Loader.xaml.cs">
       <DependentUpon>Loader.xaml</DependentUpon>
     </Compile>
@@ -201,6 +204,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="IncomingCall.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="InMessages.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

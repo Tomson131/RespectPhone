@@ -40,7 +40,7 @@ namespace RespectPhone
             }
         }
 
-        internal string base_url { get; set; }= "https://e.respectrb.ru/api/aster_sip_detail/";
+        public string base_url { get; set; }= "https://e.respectrb.ru/api/aster_sip_detail/";
         public bool registrationRequired { get; set; } = true;
 
         public void SetExt(WebLogin w)
